@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+.ipynb_checkpoints/
+*.pyc
+__pycache__
+.pytest_cache
+OUTPUT/
+test/simulated_data/epistasis
+test/simulated_data/additive
+docs/build/
+Scratchpad.ipynb
+tests/
