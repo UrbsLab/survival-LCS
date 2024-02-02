@@ -1,0 +1,15 @@
+.DS_Store
+.idea
+.ipynb_checkpoints/
+*.pyc
+__pycache__
+.pytest_cache
+OUTPUT/
+/pipeline copy/
+/pipeline copy 2/
+/pipeline_final/
+/pipeline_old/
+/pipeline_old_final/
+/pipeline_trial_run/
+/pipeline/simulated_datasets/*
+Archive.zip
