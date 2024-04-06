@@ -1,0 +1,98 @@
+import pickle
+from skExSTraCS import ExSTraCS
+import os
+import numpy as np
+import csv
+import time
+import sys
+from skrebate import MultiSURF
+
+def job(experiment_path,cv):
+    job_start_time = time.time()
+
+    file = open(experiment_path+'/phase1pickle', 'rb')
+    phase1_pickle = pickle.load(file)
+    file.close()
+
+    cv_info = phase1_pickle[0]
+    time_label = phase1_pickle[8]
+    status_label = phase1_pickle[9] 
+    data_headers = phase1_pickle[1][2] #might need to double check this
+    model_path = phase1_pickle[13]
+
+    train_data_features = cv_info[cv][0]
+    train_data_times = cv_info[cv][1]
+    train_data_statuses = cv_info[cv][2]
+    train_instance_labels = cv_info[cv][3]
+    train_group_labels = cv_info[cv][4]
+    train_dataEvents = cv_info[cv][5]
+    test_data_features = cv_info[cv][6]
+    test_data_times = cv_info[cv][7]
+    test_data_statuses = cv_info[cv][8]
+    test_instance_labels = cv_info[cv][9]
+    test_group_labels = cv_info[cv][10]
+    test_dataEvents = cv_info[cv][11]
+    inst_label = cv_info[cv][12]
+    group_label = cv_info[cv][13]
+    cv_headers = cv_info[cv][14]
+
+    # Create CV directory
+    if not os.path.exists(experiment_path + '/CV_' + str(cv)):
+        os.mkdir(experiment_path + '/CV_' + str(cv))
+
+    # Open pretrained model and resave model into DIVE directory
+    file = open(model_path + '/ExSTraCS_'+str(cv), 'rb')
+    model = pickle.load(file)
+    outfile = open(experiment_path + '/CV_' + str(cv) + '/model', 'wb')
+    pickle.dump(model, outfile)
+    outfile.close()
+
+    # Export Testing Accuracy for each instance
+    predicted_data_times = model.predict(test_data_features)    #still editing
+    equality = np.equal(predicted_data_times, test_data_times)
+    with open(experiment_path + '/CV_' + str(cv) + '/instTestingAccuracy.csv', mode='w') as file:
+        writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow([inst_label, 'isCorrect'])
+        for i in range(len(test_instance_labels)):
+            writer.writerow([test_instance_labels[i], 1 if equality[i] else 0])
+    file.close()
+
+    # Export Aggregate Testing Accuracy
+    outfile = open(experiment_path + '/CV_' + str(cv) + '/testingAccuracy.txt', mode='w')
+    #need to use brier here
+    outfile.write(str(model.brier_score(test_data_features,test_data_statuses,test_data_times, train_dataEvents, test_dataEvents)))
+    outfile.close()
+
+    # Get AT Scores for each instance
+    AT_scores = model.get_attribute_tracking_scores(instance_labels=np.array(train_instance_labels))
+
+    # Normalize AT Scores
+    normalized_AT_scores = []
+    for i in range(len(AT_scores)):
+        normalized = AT_scores[i][1]
+        max_score = max(normalized)
+        for j in range(len(normalized)):
+            if max_score != 0:
+                normalized[j] /= max_score
+            else:
+                normalized[j] = 0
+        normalized_AT_scores.append(list(normalized))
+
+    # Save Normalized AT Scores
+    with open(experiment_path + '/CV_' + str(cv) + '/normalizedATScores.csv', mode='w') as file:
+        writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow([inst_label] + list(cv_headers))
+        for i in range(len(train_instance_labels)):
+            writer.writerow([train_instance_labels[i]] + normalized_AT_scores[i])
+    file.close()
+
+    # Save Runtime
+    runtime_file = open(experiment_path + '/CV_' + str(cv) + '/runtime.txt', 'w')
+    runtime_file.write(str(time.time() - job_start_time))
+    runtime_file.close()
+
+    # Print completion
+    print('CV '+str(cv) + " phase 1 complete")
+
+if __name__ == '__main__':
+    job(sys.argv[1],int(sys.argv[2]))
