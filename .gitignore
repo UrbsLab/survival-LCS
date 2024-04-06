@@ -1,1 +1,9 @@
-./pipeline/simulated_datasets
+__pycache__
+dask_logs/
+pipeline/simulated_datasets/EDM-1_one_of_each.zip
+pipeline/simulated_datasets/EDM-1_one_of_each/
+pipeline/cv_sim_data/*
+pipeline/pickled_cv_models/*
+pipeline/sim_lcs_output/*
+pipeline_copy/
+test/

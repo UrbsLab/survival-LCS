@@ -851,7 +851,9 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
     def get_final_training_accuracy(self,RC=False):
         if self.hasTrained or RC:
             originalTrainingData = self.env.formatData.savedRawTrainingData
-            return self.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train, dataEvents_train, dataEvents_test)
+            # Doesn't Work
+            # return self.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train, dataEvents_train, dataEvents_test)
+
         else:
             raise Exception("There is no final training accuracy to return, as the ExSTraCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
@@ -864,8 +866,9 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             for state in originalTrainingData[0]:
                 self.population.makeEvalMatchSet(self,state)
                 predictionArray = Prediction(self, self.population)
-                if predictionArray.hasMatch:
-                    numCovered += 1
+                # There is no hasMatch Variable
+                # if predictionArray.hasMatch:
+                #     numCovered += 1
                 self.population.clearSets()
             return numCovered/len(originalTrainingData[0])
         else:

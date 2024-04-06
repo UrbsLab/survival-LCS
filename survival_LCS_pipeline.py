@@ -244,7 +244,7 @@ class survivalLCS():
     # Run survival-LCS on simulated CV datasets, pickle model files for LCS_DIVE
     #------------------------------------------------------------------------------------------
     def returnCVModelFiles(self):
-        import matplotlib.pyplot as plt
+        # import matplotlib.pyplot as plt
 
         #data_path = '/Users/alexaw/Documents/UrbsLab/skExSTraCS/cv_data_5fold' #this needs to move
         instID = self.instance_label

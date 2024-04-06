@@ -1,5 +1,5 @@
 import pickle
-from skExSTraCS import ExSTraCS
+from survival_ExSTraCS import ExSTraCS
 import os
 import numpy as np
 import csv

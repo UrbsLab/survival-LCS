@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import copy
 import pickle
-from LCSDIVE import AnalysisPhase1_pretrainedJob
+import AnalysisPhase1_pretrainedJob
 import glob
 
 '''Sample Run Code

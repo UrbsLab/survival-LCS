@@ -15,7 +15,7 @@ from random import sample
 import matplotlib.pyplot as plt
 import sys
 import shutil
-sys.path.append("/Users/alexaw/Documents/UrbsLab/test")
+sys.path.append("/home/bandheyh/common/survival-lcs")
 
 
 '''Sample Run Code

@@ -1,0 +1,15 @@
+pandas 
+matplotlib 
+scikit-learn==1.22.2
+skrebate 
+fastcluster 
+seaborn 
+networkx 
+pygame 
+pytest-shutil 
+eli5 
+scikit-survival==0.21.0
+ipython
+jupyter
+dask
+dask-jobqueue

@@ -2,9 +2,9 @@ import sys
 import os
 import argparse
 import time
-from LCSDIVE import AnalysisPhase2ATJob
-from LCSDIVE import AnalysisPhase2RuleJob
-from LCSDIVE import AnalysisPhase2NetworkJob
+import AnalysisPhase2ATJob
+import AnalysisPhase2RuleJob
+import AnalysisPhase2NetworkJob
 
 '''Sample Run Code
 python AnalysisPhase2.py --o ../Outputs --e mp6 --cluster 0
