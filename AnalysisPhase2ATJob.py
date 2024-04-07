@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist, pdist, squareform
 import seaborn
 from sklearn.metrics import silhouette_score
+import sys
+sys.setrecursionlimit(100000000)
 
 def job(experiment_path, at_height_factor):
     job_start_time = time.time()
