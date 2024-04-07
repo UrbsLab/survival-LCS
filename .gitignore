@@ -8,7 +8,9 @@ pipeline/sim_lcs_output/*
 pipeline/results.pkl
 pipeline_copy/
 pipeline_2/
+pipeline_3/
 pipeline_final/
 test/
+old/
 job.*
 job1.*

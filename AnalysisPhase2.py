@@ -78,7 +78,7 @@ def submitLocalRuleJob(experiment_path,rule_height_factor):
 def submitLocalNetworkJob(experiment_path):
     AnalysisPhase2NetworkJob.job(experiment_path)
 
-def submitClusterATJob(experiment_path,at_height_factor,m1,m2):
+def submitClusterATJobOld(experiment_path,at_height_factor,m1,m2):
     job_ref = str(time.time())
     job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
     sh_file = open(job_name, 'w')
@@ -92,7 +92,7 @@ def submitClusterATJob(experiment_path,at_height_factor,m1,m2):
     sh_file.close()
     os.system('bsub -q i2c2_normal -R "rusage[mem='+str(m1)+'G]" -M '+str(m2)+'G < ' + job_name)
 
-def submitClusterRuleJob(experiment_path,rule_height_factor,m1,m2):
+def submitClusterRuleJobOld(experiment_path,rule_height_factor,m1,m2):
     job_ref = str(time.time())
     job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
     sh_file = open(job_name, 'w')
@@ -106,7 +106,7 @@ def submitClusterRuleJob(experiment_path,rule_height_factor,m1,m2):
     sh_file.close()
     os.system('bsub -q i2c2_normal -R "rusage[mem='+str(m1)+'G]" -M '+str(m2)+'G < ' + job_name)
 
-def submitClusterNetworkJob(experiment_path,m1,m2):
+def submitClusterNetworkJobOld(experiment_path,m1,m2):
     job_ref = str(time.time())
     job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
     sh_file = open(job_name, 'w')
@@ -119,6 +119,69 @@ def submitClusterNetworkJob(experiment_path,m1,m2):
     sh_file.write('python ' + this_file_path + '/AnalysisPhase2NetworkJob.py ' + experiment_path + '\n')
     sh_file.close()
     os.system('bsub -q i2c2_normal -R "rusage[mem=' + str(m1) + 'G]" -M ' + str(m2) + 'G < ' + job_name)
+
+def submitClusterATJob(experiment_path,at_height_factor,memory1,memory2):
+    job_ref = str(time.time())
+    job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
+    sh_file = open(job_name, 'w')
+    sh_file.write('#!/bin/bash\n')
+    sh_file.write('#SBATCH -p ' + 'defq' + '\n')
+    sh_file.write('#SBATCH --job-name=' + job_ref + '\n')
+    sh_file.write('#SBATCH --nodes=1\n')
+    sh_file.write('#SBATCH --ntasks=1\n')
+    sh_file.write('#SBATCH --cpus-per-task=8\n')
+    sh_file.write('#SBATCH --mem=' + str(memory2) + 'G' + '\n')
+    # sh_file.write('#BSUB -M '+str(maximum_memory)+'GB'+'\n')
+    # sh_file.write('#SBATCH -J ' + job_ref + '\n')
+    sh_file.write('#SBATCH -o ' + experiment_path + '/logs/' + job_ref + '.o\n')
+    sh_file.write('#SBATCH -e ' + experiment_path + '/logs/' + job_ref + '.e\n')
+
+    this_file_path = os.path.dirname(os.path.realpath(__file__))
+    sh_file.write('python ' + this_file_path + '/AnalysisPhase2ATJob.py ' + experiment_path + ' '+ str(at_height_factor)+'\n')
+    sh_file.close()
+    os.system('sbatch ' + job_name)
+
+def submitClusterRuleJob(experiment_path,rule_height_factor,memory1,memory2):
+    job_ref = str(time.time())
+    job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
+    sh_file = open(job_name, 'w')
+    sh_file.write('#!/bin/bash\n')
+    sh_file.write('#SBATCH -p ' + 'defq' + '\n')
+    sh_file.write('#SBATCH --job-name=' + job_ref + '\n')
+    sh_file.write('#SBATCH --nodes=1\n')
+    sh_file.write('#SBATCH --ntasks=1\n')
+    sh_file.write('#SBATCH --cpus-per-task=8\n')
+    sh_file.write('#SBATCH --mem=' + str(memory2) + 'G' + '\n')
+    # sh_file.write('#BSUB -M '+str(maximum_memory)+'GB'+'\n')
+    # sh_file.write('#SBATCH -J ' + job_ref + '\n')
+    sh_file.write('#SBATCH -o ' + experiment_path + '/logs/' + job_ref + '.o\n')
+    sh_file.write('#SBATCH -e ' + experiment_path + '/logs/' + job_ref + '.e\n')
+
+    this_file_path = os.path.dirname(os.path.realpath(__file__))
+    sh_file.write('python ' + this_file_path + '/AnalysisPhase2RuleJob.py ' + experiment_path + " " + str(rule_height_factor)+'\n')
+    sh_file.close()
+    os.system('sbatch ' + job_name)
+
+def submitClusterNetworkJob(experiment_path,memory1,memory2):
+    job_ref = str(time.time())
+    job_name = experiment_path + '/jobs/' + job_ref + '_run.sh'
+    sh_file = open(job_name, 'w')
+    sh_file.write('#!/bin/bash\n')
+    sh_file.write('#SBATCH -p ' + 'defq' + '\n')
+    sh_file.write('#SBATCH --job-name=' + job_ref + '\n')
+    sh_file.write('#SBATCH --nodes=1\n')
+    sh_file.write('#SBATCH --ntasks=1\n')
+    sh_file.write('#SBATCH --cpus-per-task=8\n')
+    sh_file.write('#SBATCH --mem=' + str(memory2) + 'G' + '\n')
+    # sh_file.write('#BSUB -M '+str(maximum_memory)+'GB'+'\n')
+    # sh_file.write('#SBATCH -J ' + job_ref + '\n')
+    sh_file.write('#SBATCH -o ' + experiment_path + '/logs/' + job_ref + '.o\n')
+    sh_file.write('#SBATCH -e ' + experiment_path + '/logs/' + job_ref + '.e\n')
+
+    this_file_path = os.path.dirname(os.path.realpath(__file__))
+    sh_file.write('python ' + this_file_path + '/AnalysisPhase2NetworkJob.py ' + experiment_path + '\n')
+    sh_file.close()
+    os.system('sbatch ' + job_name)
 
 
 if __name__ == '__main__':

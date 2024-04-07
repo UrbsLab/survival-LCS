@@ -284,7 +284,7 @@ def submitClusterJob(cv,experiment_path,memory1,memory2):
     this_file_path = os.path.dirname(os.path.realpath(__file__))
     sh_file.write('python ' + this_file_path + '/AnalysisPhase1_pretrainedJob.py ' + experiment_path + " " + str(cv) + '\n')
     sh_file.close()
-    os.system('sbatch' + job_name)
+    os.system('sbatch ' + job_name)
 
 
 def cv_partitioner(td, cv_partitions, outcomeLabel, randomSeed,method,match_label):

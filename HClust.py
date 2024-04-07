@@ -213,6 +213,7 @@ class ClusterTree:
             #randomly sample instances based off of cluster instance mean and SD
             array = self.getRandomInstances(cluster_mean,cluster_sd,len(cluster.instance_index_array))
             labels = list(range(len(cluster.instance_index_array)))
+            array = array + 1e-8
             linkage_matrix = linkage(array,metric=metric,method=method)
 
             #Create Cluster Tree from linkage matrix and get CI of root cluster

@@ -60,7 +60,8 @@ def job(experiment_path,cv):
     # Export Aggregate Testing Accuracy
     outfile = open(experiment_path + '/CV_' + str(cv) + '/testingAccuracy.txt', mode='w')
     #need to use brier here
-    outfile.write(str(model.brier_score(test_data_features,test_data_statuses,test_data_times, train_dataEvents, test_dataEvents)))
+    # outfile.write(str(model.brier_score(test_data_features,test_data_statuses,test_data_times, train_dataEvents, test_dataEvents)))
+    outfile.write(str(model.brier_score(test_data_features,test_data_statuses,test_data_times, train_data_times, train_dataEvents, test_dataEvents)))
     outfile.close()
 
     # Get AT Scores for each instance

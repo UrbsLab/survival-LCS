@@ -264,7 +264,7 @@ class Metrics:
         prob_cens_y = cens.predict_proba(test_time, current = False)
         prob_cens_y[prob_cens_y == 0] = numpy.inf
         #print('len(prob_cens_y)', len(prob_cens_y))
-            #prob_cens_t = numpy.append(prob_cens_t,[prob_cens_t[-1]]*(len(prob_cens_y) - len(prob_cens_t)))
+        prob_cens_t = numpy.append(prob_cens_t,[prob_cens_t[-1]]*(len(prob_cens_y) - len(prob_cens_t)))
             
 
         # Calculating the brier scores at each time point
