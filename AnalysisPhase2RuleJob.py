@@ -13,6 +13,8 @@ import HClust
 from sklearn.metrics import silhouette_score
 import matplotlib as mpl
 from Utilities import find_elbow
+import sys
+sys.setrecursionlimit(100000000)
 
 def job(experiment_path, rule_height_factor):
     job_start_time = time.time()

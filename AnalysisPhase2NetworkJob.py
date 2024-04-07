@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import math
 import sys
 import numpy as np
+import sys
+sys.setrecursionlimit(100000000)
 
 def job(experiment_path):
     file = open(experiment_path + '/phase1pickle', 'rb')

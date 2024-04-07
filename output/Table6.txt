@@ -1,0 +1,30 @@
+\begin{table}[h!]
+\caption{Heterogeneous Datasets - Integrated brier scores (IBS) with lower and upper 95\% CIs.}
+\begin{center}
+\small
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+ \textbf{Features} &  \textbf{MAF} & \textbf{Censoring} &  \textbf{IBS} &  \textbf{Lower CI} &  \textbf{Upper CI} \\ \hline
+\multirow{6}{*}{100} & \multirow{3}{*}{0.2} & 10\% & 0.14149 & 0.10645 & 0.18304 \\
+ & & 40\% & 0.18536 & 0.14444 & 0.23403 \\
+ & & 80\% & 0.36859 & 0.20219 & 0.56586 \\
+ & \multirow{3}{*}{0.4} & 10\% & 0.09294 & 0.05655 & 0.13616 \\
+ & & 40\% & 0.13661 & 0.09028 & 0.19196 \\
+ & & 80\% & 0.81028 & 0.45764 & 1.26555 \\
+ \hline \multirow{6}{*}{1000} & \multirow{3}{*}{0.2} & 10\% & 0.28285 & 0.21959 & 0.35785 \\
+ & & 40\% & 0.13791 & 0.10381 & 0.17931 \\
+ & & 80\% & 0.27066 & 0.09739 & 0.48117 \\
+ & \multirow{3}{*}{0.4} & 10\% & 0.14966 & 0.12946 & 0.17361 \\
+ & & 40\% & 0.13822 & 0.10062 & 0.18281 \\
+ & & 80\% & nan & nan & nan \\
+ \hline \multirow{6}{*}{10000} & \multirow{3}{*}{0.2} & 10\% & 0.11434 & 0.09005 & 0.14384 \\
+ & & 40\% & 0.29555 & 0.23873 & 0.36295 \\
+ & & 80\% & 0.45371 & 0.45371 & 0.45371 \\
+ & \multirow{3}{*}{0.4} & 10\% & 0.12263 & 0.08236 & 0.17141 \\
+ & & 40\% & 0.23196 & 0.18946 & 0.28235 \\
+ & & 80\% & 0.20232 & 0.02772 & 0.4112 \\
+ \hline
+ \end{tabular}
+\end{center}
+\label{tab:het_ibs}
+\end{table}

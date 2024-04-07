@@ -1,0 +1,13 @@
+\begin{table}[h]
+\centering
+\caption{Error updates for rules in [C] and  [I] given censored or non-censored instances.}
+\label{table:1}
+\begin{tabular}{lcc}
+\hline
+\multicolumn{1}{c}{\textbf{}} & \multicolumn{1}{c}{\textbf{Event Occurred}} & \multicolumn{1}{c}{\textbf{Censored}} \\
+\hline
+\textbf{[C]} & Err = $\frac{|EI_C - \text{eventTime}|}{T_{\text{max}} - T_{\text{min}}}$ & Err = 0 \\
+\textbf{[I]} & Err = 1 & Err = 1 $\times$ propIncorrect \\
+\hline
+\end{tabular}
+\end{table}
