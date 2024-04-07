@@ -9,6 +9,8 @@ import copy
 import pickle
 import AnalysisPhase1_pretrainedJob
 import glob
+import warnings
+warnings.filterwarnings("ignore")
 
 '''Sample Run Code
 python AnalysisPhase1_pretrained.py --o /Users/robert/Desktop/outputs/test1/mp6/viz-outputs --e root --d /Users/robert/Desktop/outputs/test1/mp6/CVDatasets --m /Users/robert/Desktop/outputs/test1/mp6/training/pickledModels --inst Instance --cv 3 --cluster 0
