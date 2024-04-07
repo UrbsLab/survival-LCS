@@ -117,7 +117,7 @@ class Prediction:
             empDist = np.asarray(sorted(self.matchCoverTimes), dtype=object).reshape((len(self.matchCoverTimes), 1)) #sort the correct times, set as the empricial distribution
             if len(empDist) == 0:
                 print("No matching cover times available, no empirical distribution, cannot predict survival distribution")
-                return
+                return None
             
             KDEmodel = KernelDensity(bandwidth=4, kernel='epanechnikov')
             KDEmodel.fit(empDist) #fit the KDE to the empirical distribution

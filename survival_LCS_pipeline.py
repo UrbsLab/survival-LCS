@@ -57,7 +57,7 @@ python AnalysisPhase1_pretrained.py --o /Users/robert/Desktop/outputs/test1/mp6/
 '''
 
 class survivalLCS():
-    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =20000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3):
+    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3):
 
 
         ''' #Datasets for simulation

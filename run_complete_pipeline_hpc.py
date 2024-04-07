@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import sys
 import shutil
 import sksurv
+import pickle
 from sklearn.impute import KNNImputer
 from sklearn.impute import SimpleImputer
 from survival_LCS_pipeline import survivalLCS
@@ -60,22 +61,22 @@ import survival_data_simulator
 # ### Test run scripts interactively
 
 # %%
-%run -i survival_AttributeTracking.py
-%run -i survival_Classifier.py
-%run -i survival_ClassifierSet.py
-%run -i survival_DataManagement.py
-%run -i survival_ExpertKnowledge.py
-%run -i survival_ExSTraCS.py
-%run -i survival_IterationRecord.py
-%run -i survival_Pareto.py
-%run -i survival_Prediction.py
-%run -i survival_StringEnumerator.py
-%run -i survival_OfflineEnvironment.py
-%run -i survival_Timer.py
-%run -i survival_RuleCompaction.py
-%run -i survival_Metrics.py
-%run -i utils.py
-%run -i nonparametric_estimators.py
+# %run -i survival_AttributeTracking.py
+# %run -i survival_Classifier.py
+# %run -i survival_ClassifierSet.py
+# %run -i survival_DataManagement.py
+# %run -i survival_ExpertKnowledge.py
+# %run -i survival_ExSTraCS.py
+# %run -i survival_IterationRecord.py
+# %run -i survival_Pareto.py
+# %run -i survival_Prediction.py
+# %run -i survival_StringEnumerator.py
+# %run -i survival_OfflineEnvironment.py
+# %run -i survival_Timer.py
+# %run -i survival_RuleCompaction.py
+# %run -i survival_Metrics.py
+# %run -i utils.py
+# %run -i nonparametric_estimators.py
 
 # %% [markdown]
 # ## Survival-LCS Parameters
@@ -86,7 +87,7 @@ import survival_data_simulator
 # parameter to run using hpc resources
 HPC = True
 
-homedir = "/home/bandheyh/common/survival-lcs/pipeline"
+homedir = "/home/bandheyh/common/survival-lcs/pipeline_2"
 models = ['me', 'epi', 'het', 'add']
 m0s = []
 
@@ -103,7 +104,7 @@ if DEBUG:
     c = [0.1]
     nfeat = ['f100', 'f1000']
     maf = ['maf0.2', 'maf0.4']
-    iterations = 500
+    iterations = 1000
     cv_splits = 3
 
 ### Create empty brier score DataFrame
@@ -133,12 +134,13 @@ from survival_LCS_pipeline import survivalLCS
 # 3. sim_lcs_output (with subfolders: me, epi, het, add)
 
 # %%
-def make_folder(path):
+def make_folder(path, overwrite=False):
     if not os.path.exists(path):
         os.makedirs(path)
     else:
-        shutil.rmtree(path)
-        os.makedirs(path)
+        if overwrite:
+            shutil.rmtree(path)
+            os.makedirs(path)
 
 # %%
 def make_folder_structure(homedir, models, overwrite=True):
@@ -147,9 +149,9 @@ def make_folder_structure(homedir, models, overwrite=True):
         make_folder(homedir+'/pickled_cv_models/')
         make_folder(homedir+'/sim_lcs_output/')
         for model in models:
-            make_folder(homedir+'/cv_sim_data/cv_' + model)
-            make_folder(homedir+'/pickled_cv_models/' + model)
-            make_folder(homedir+'/sim_lcs_output/' + model)
+            make_folder(homedir+'/cv_sim_data/cv_' + model, overwrite=overwrite)
+            make_folder(homedir+'/pickled_cv_models/' + model, overwrite=overwrite)
+            make_folder(homedir+'/sim_lcs_output/' + model, overwrite=overwrite)
     else:
         raise NotImplemented
 
@@ -220,14 +222,16 @@ def run_slcs(survivalLCS):
     survivalLCS.returnPenetrance()
     survivalLCS.returnSurvivalData()
 
+    lcs_run = True
+
     if lcs_run == True:
         survivalLCS.returnCVDatasets()
         survivalLCS.returnCVModelFiles()
 
         current_ibs = survivalLCS.returnIBSresults()
-        current_ibs = current_ibs.rename(columns={"mean": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k]), 
-                                                  "ci_lower": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k])+'_ci_lower', 
-                                                  "ci_upper": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k])+'_ci_upper'})
+        # current_ibs = current_ibs.rename(columns={"mean": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k]), 
+        #                                           "ci_lower": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k])+'_ci_lower', 
+        #                                           "ci_upper": str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k])+'_ci_upper'})
     else:
         print("Datasets generated only")
 
@@ -252,7 +256,6 @@ def make_breir_output(brier_df_list, output_path, model_type, models, dtype_list
     plt.savefig(output_path+'/brier_scores_'+model_type + '.png')
 
 # %%
-%%capture
 from survival_LCS_pipeline import survivalLCS
 job_obj_list = list()
 for i in range(0,len(models)):
@@ -260,13 +263,13 @@ for i in range(0,len(models)):
         brier_df_list = list()
         for k in range(0,len(maf)):
             g, mtype, d, m, o, e,brier_df,cox_brier_df, m0_path, m0_type, m1_path, m1_type = get_parameters(models, nfeat, maf, i, j, k)
-            survivalLCS = survivalLCS(g, mtype, d, m, o, e,brier_df,cox_brier_df, m0_path, m0_type, m1_path, m1_type, 
+            slcs = survivalLCS(g, mtype, d, m, o, e,brier_df,cox_brier_df, m0_path, m0_type, m1_path, m1_type, 
                                       c = c,iterations = iterations, cv = cv_splits)
             if HPC == False:
-                current_ibs = run_slcs(survivalLCS)
+                current_ibs = run_slcs(slcs)
                 brier_df_list.append(current_ibs)
             else:
-                job_obj_list.append(survivalLCS)
+                job_obj_list.append(slcs)
         if HPC == False:
             if lcs_run == True:
                 make_breir_output(brier_df_list, survivalLCS.output_path, survivalLCS.model_type, models, dtype_list, i)
@@ -322,18 +325,36 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
     return client
 
 # %%
-cluster = get_cluster()
+cluster = get_cluster(output_path=homedir)
 
 # %%
-make_folder('./dask_logs/')
+make_folder(homedir+'/dask_logs/', overwrite=True)
 
 # %%
 def run_parallel(model):
-    brier_df = run_slcs(model)
+    try:
+        brier_df = run_slcs(model)
+    except Exception as e:
+        brier_df = e
     return brier_df
 
 # %%
-if HPC:
-    results = dask.compute([dask.delayed(run_parallel)(model) for model in job_obj_list])
+job_obj_list
+
+# %%
+if HPC == True:
+    delayed_results = []
+    for model in job_obj_list:
+        brier_df = dask.delayed(run_parallel)(model)
+        delayed_results.append(brier_df)
+    results = dask.compute(*delayed_results)
+
+# %%
+# if HPC:
+#     results = dask.compute([dask.delayed(run_parallel)(model) for model in job_obj_list])
+
+# %%
+with open(homedir+'/results.pkl', 'wb') as file:
+    pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
 
 

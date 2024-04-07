@@ -1,3 +1,4 @@
+numpy==1.21.2
 pandas 
 matplotlib 
 scikit-learn==1.22.2
@@ -10,6 +11,6 @@ pytest-shutil
 eli5 
 scikit-survival==0.21.0
 ipython
-jupyter
+notebook
 dask
 dask-jobqueue
