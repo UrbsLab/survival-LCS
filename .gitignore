@@ -5,6 +5,7 @@ pipeline/simulated_datasets/EDM-1_one_of_each/
 pipeline/cv_sim_data/*
 pipeline/pickled_cv_models/*
 pipeline/sim_lcs_output/*
+pipeline/results.pkl
 pipeline_copy/
 pipeline_2/
 pipeline_final/
