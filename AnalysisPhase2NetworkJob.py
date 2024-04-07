@@ -86,6 +86,7 @@ def job(experiment_path):
     nx.draw_networkx_nodes(G, pos=pos, nodelist=acc_spec_dict.keys(), node_size=[v * 1 for v in acc_spec_dict.values()], node_color='#FF3377')
     nx.draw_networkx_edges(G, pos=pos, edge_color='#E0B8FF', edgelist=edge_list, width=[v * 1 for v in weight_list])
     nx.draw_networkx_labels(G, pos=pos)
+    nx.write_gexf(G, experiment_path + '/Composite/rulepop/rulepopGraph.gexf')
     plt.axis('off')
     plt.savefig(experiment_path + '/Composite/rulepop/rulepopGraph.png', dpi=300)
     plt.close('all')
