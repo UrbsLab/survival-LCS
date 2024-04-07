@@ -1,6 +1,8 @@
 # Instructions for running Survival-LCS Experiments
 
-sim_full_pipeline_LCS.py
+### TODO
+
+<!-- sim_full_pipeline_LCS.py
 
 There's two main files that will need a few tweaks- updating file names and modifying any run parameters, as follows:
 
@@ -25,5 +27,5 @@ pickled_cv_models (with subfolders: me, epi, het, add)
 sim_lcs_output (with subfolders: me, epi, het, add)
 
 
-Simulated data from Gametes is in the "simulated_datasets" folder. The script "survival_data_siumulator.py" calls "importGametes.py" to parse the gametes model files and generate survival data. 
+Simulated data from Gametes is in the "simulated_datasets" folder. The script "survival_data_siumulator.py" calls "importGametes.py" to parse the gametes model files and generate survival data.  -->
 
