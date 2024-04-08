@@ -73,12 +73,14 @@ def job(experiment_path, at_height_factor):
     AT_full_df = pd.DataFrame(merged_AT, columns=data_headers, index=full_instance_labels)
 
     plt.figure(figsize=((10 / math.sqrt(at_height_factor), 10 * math.sqrt(at_height_factor))))
-    h = seaborn.heatmap(AT_full_df, cmap='plasma')
+    h = seaborn.heatmap(AT_full_df, cmap='plasma', xticklabels=1)
     h.tick_params(left=False, labelleft=False)
     if merged_AT.shape[1] <= 11:
         h.set_xticklabels(h.get_xmajorticklabels(),fontsize='xx-large')
     elif merged_AT.shape[1] <= 20:
         h.set_xticklabels(h.get_xmajorticklabels(),fontsize='x-large')
+    else:
+        h.set_xticklabels(h.get_xmajorticklabels(),fontsize='xx-small')
     if merged_AT.shape[1] >= 20:
         plt.xticks(rotation=90)
     plt.xlabel('Features',fontsize='xx-large')
@@ -108,7 +110,9 @@ def job(experiment_path, at_height_factor):
     merged_test = np.array(merged_test)
 
     # AT Clustermaps and CSV Analysis
-    g = seaborn.clustermap(AT_full_df, metric='sqeuclidean', method='ward', cmap='plasma')
+    num_instances, num_feat = AT_full_df.shape
+    plt.subplots(figsize=(num_instances, num_feat))
+    g = seaborn.clustermap(AT_full_df, metric='sqeuclidean', method='ward', cmap='plasma', xticklabels=1)
 
     feature_order_indices = g.dendrogram_col.reordered_ind
     new_feature_order = []
@@ -189,12 +193,22 @@ def job(experiment_path, at_height_factor):
             combo_list = pd.Series.to_frame(color_list)
             combo_list.columns = ['Found']
 
-        g = seaborn.clustermap(AT_full_df, row_linkage=g.dendrogram_row.linkage, col_linkage=g.dendrogram_col.linkage,row_colors=combo_list, cmap='plasma',figsize=(10 / math.sqrt(at_height_factor), 10 * math.sqrt(at_height_factor)))
+        # plt.subplots(figsize=(num_instances, num_feat))
+        # print(num_instances, num_feat)
+        g = seaborn.clustermap(AT_full_df, row_linkage=g.dendrogram_row.linkage, 
+                                col_linkage=g.dendrogram_col.linkage,row_colors=combo_list, 
+                                cmap='plasma',figsize=(10 / math.sqrt(at_height_factor), 
+                                10 * math.sqrt(at_height_factor)), xticklabels=1)
+        # g = seaborn.clustermap(AT_full_df, row_linkage=g.dendrogram_row.linkage, 
+        #                 col_linkage=g.dendrogram_col.linkage,row_colors=combo_list, 
+        #                 cmap='plasma',figsize=(num_instances, num_feat), xticklabels=1)
         g.ax_heatmap.tick_params(right=False,labelright=False)
         if merged_AT.shape[1] <= 11:
             g.ax_heatmap.set_xticklabels(g.ax_heatmap.get_xmajorticklabels(),fontsize='xx-large')
         elif merged_AT.shape[1] <= 20:
             g.ax_heatmap.set_xticklabels(g.ax_heatmap.get_xmajorticklabels(),fontsize='x-large')
+        else:
+            g.ax_heatmap.set_xticklabels(g.ax_heatmap.get_xmajorticklabels(),fontsize='xx-small')
         g.ax_heatmap.set_xlabel('Features',fontsize='xx-large')
         g.ax_heatmap.set_ylabel('Instances',fontsize='xx-large',rotation=-90,labelpad=20)
         if merged_AT.shape[1] >= 20:

@@ -8,6 +8,7 @@ pipeline/simulated_datasets/EDM-1_one_of_each/
 # pipeline/results.pkl
 pipeline/
 pipeline_copy/
+pipeline_copy_old/
 pipeline_2/
 pipeline_3/
 pipeline_final/

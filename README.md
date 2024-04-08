@@ -1,6 +1,8 @@
-# Instructions for running Survival-LCS Experiments
+# Survival-LCS
 
-### TODO
+## Instructions for running Survival-LCS
+
+
 
 <!-- sim_full_pipeline_LCS.py
 
