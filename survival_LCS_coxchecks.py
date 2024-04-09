@@ -10,6 +10,7 @@ import copy
 import subprocess
 from datetime import date
 import time
+import random
 import sksurv
 import subprocess
 import matplotlib.pyplot as plt
@@ -37,7 +38,7 @@ from survival_Metrics import Metrics
 from survival_ExSTraCS import ExSTraCS
 
 class survivalLCS_coxChecks():
-    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3):
+    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3,date_used='2024-04-07'):
 
 
         ''' #Datasets for simulation
@@ -132,6 +133,7 @@ class survivalLCS_coxChecks():
         self.do_cluster = cluster
         self.memory1 = m1
         self.memory2 = m2
+        self.date_used = date_used
 
 
         # Create experiment folders and check path validity
@@ -203,7 +205,7 @@ class survivalLCS_coxChecks():
                 if not os.path.exists(self.output_path_censor):
                     os.mkdir(self.output_path_censor)
 
-                train_file = self.data_path+ '/' + str(self.model_type) + '_cens'+ str(self.censor[j]) + '_surv_'+ str(date.today()) + '_CV_'+str(i)+'_Train.txt'
+                train_file = self.data_path+ '/' + str(self.model_type) + '_cens'+ str(self.censor[j]) + '_surv_'+ self.date_used + '_CV_'+str(i)+'_Train.txt'
                 data_train = pd.read_csv(train_file, sep='\t') #, header = 0
                 timeLabel = self.time_label
                 censorLabel = self.status_label
@@ -220,7 +222,7 @@ class survivalLCS_coxChecks():
                 dataEventStatus_train = dataEvents_train[:,1]
 
 
-                test_file = self.data_path+ '/' + str(self.model_type) + '_cens'+ str(self.censor[j]) + '_surv_'+ str(date.today()) + '_CV_'+str(i)+'_Test.txt'
+                test_file = self.data_path+ '/' + str(self.model_type) + '_cens'+ str(self.censor[j]) + '_surv_'+ self.date_used + '_CV_'+str(i)+'_Test.txt'
                 data_test = pd.read_csv(test_file, sep='\t') #, headers = 0
                 timeLabel = 'eventTime'
                 censorLabel = 'eventStatus'
@@ -301,32 +303,73 @@ class survivalLCS_coxChecks():
 
                     #concat dfs
                     self.cox_df = pd.concat([self.cox_df, cox_data], ignore_index=True, axis=0)
-                    self.perm_cox_df = self.cox_df
                     # self.rsf_df = pd.concat([self.rsf_df, rsf_data], ignore_index=True, axis=0)
                 else:
                     print("Comparison approaches not run on datasets with > 100 features")
+
+                try:
+                    with (open(self.model_path+'/cens_'+str(self.censor[j])+'/ExSTraCS_'+str(i)+'_'+'2024-04-07', "rb")) as file:
+                        self.trainedModel = pickle.load(file)
+
+                    times, b_scores = self.trainedModel.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train,scoreEvents_train,scoreEvents_test)
+
+                    #ibs_value = self.trainedModel.integrated_b_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train,scoreEvents_train,scoreEvents_test)
+                    #print("integrated_brier_score: ",ibs_value)
+
+                    tb = pd.DataFrame({'times':times, 'b_scores'+str(i):b_scores})
+                    tb.set_index('times',inplace=True)
+
+                    #sum, then average scores
+                    ibs_df = pd.concat([tb,ibs_df],axis=1,sort=False).reset_index()
+                    ibs_df.set_index('times',inplace=True)
+                except Exception as e:
+                    print('Error generating integrated Brier scores', e)
+                    pass
+
+
+            #for ibs plotting, generate columns mean and CI
+            ibs_df[str(os.path.basename(self.output_path)) + '_cens'+ str(self.censor[j])] = ibs_df.mean(axis = 1)
+            #print('ibs_df :', ibs_df)
+            ibs_df[str(os.path.basename(self.output_path)) + '_cens'+ str(self.censor[j])+'_ci_lower'] = ibs_df[str(os.path.basename(self.output_path)) + '_cens'+ str(self.censor[j])] - (ibs_df.std(axis = 1)*2)
+            ibs_df[str(os.path.basename(self.output_path)) + '_cens'+ str(self.censor[j])+'_ci_upper'] = ibs_df[str(os.path.basename(self.output_path)) + '_cens'+ str(self.censor[j])] + (ibs_df.std(axis = 1)*2)
+            ibs_df.to_csv(self.output_path+'/ibs_df_data_'+self.model_type+'.csv', index = False)
+            # print('ibs_df :', ibs_df)
+
+            self.brier_df = pd.concat([self.brier_df,ibs_df], axis = 1, sort = False).reset_index()
+            self.brier_df.set_index('times', inplace = True)
+            self.brier_df = self.brier_df.loc[:, ~self.brier_df.columns.str.startswith('b_scores')]
+            self.brier_df.to_csv(self.output_path+'/brier_df_data_'+self.model_type+'.csv', index = False)
+
+            # print('self.brier_df from one dataset (across 3 cvs): ', self.brier_df)
 
             try:
                 cb_df[str(os.path.basename(self.output_path))] = cb_df.mean(axis = 1)
                 cb_df[str(os.path.basename(self.output_path)) + '_ci_lower'] = cb_df[str(os.path.basename(self.output_path))] - (cb_df.std(axis = 1)*2)
                 cb_df[str(os.path.basename(self.output_path)) + '_ci_upper'] = cb_df[str(os.path.basename(self.output_path))] + (cb_df.std(axis = 1)*2)
+                cb_df.to_csv(self.output_path+'/cb_df_data_'+self.model_type+'.csv', index = False)
+
 
                 self.cox_bscore_df = pd.concat([self.cox_bscore_df,cb_df], axis = 1, sort = False).reset_index()
                 self.cox_bscore_df.set_index('times', inplace = True)
                 self.cox_bscore_df = self.cox_bscore_df.loc[:, ~self.cox_bscore_df.columns.str.startswith('b_scores')]
+                self.cox_bscore_df.to_csv(self.output_path+'/cox_bscore_df_data_'+self.model_type+'.csv', index = False)
+
+                self.perm_cox_df = self.cox_df
+                self.perm_cox_df.to_csv(self.output_path+'/perm_cox_df_data_'+self.model_type+'.csv', index = False)
+
+
             except Exception as e:
                 print(e)
                 continue
-
-            #for KM plots of top 5 features
-            self.dataFeatures = np.append(dataFeatures_train, dataFeatures_test, axis = 0)
-            self.dataEvents = np.append(dataEvents_train, dataEvents_test, axis = 0)
-            self.dataHeaders = dataHeaders_train
-            
-
-    #------------------------------------------------------------------------------------------
-    # Return brier scores
-    #------------------------------------------------------------------------------------------
+    
+    def returnIBSresults(self):
+        return self.brier_df
 
     def return_cox_IBSresults(self):
         return self.cox_bscore_df
+
+    def return_cox_permresults(self):
+        return self.perm_cox_df
+
+    def return_all_results(self):
+        return (self.brier_df, self.cox_bscore_df, self.perm_cox_df)
