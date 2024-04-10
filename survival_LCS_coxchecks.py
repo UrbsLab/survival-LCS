@@ -38,7 +38,7 @@ from survival_Metrics import Metrics
 from survival_ExSTraCS import ExSTraCS
 
 class survivalLCS_coxChecks():
-    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3,date_used='2024-04-07'):
+    def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3,date_used='2024-04-09'):
 
 
         ''' #Datasets for simulation

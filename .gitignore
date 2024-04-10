@@ -12,6 +12,10 @@ pipeline_copy_old/
 pipeline_2/
 pipeline_3/
 pipeline_final/
+pipeline_moreiter/
+pipeline_moreiter_2/
+output_moreiter/
+output_final/
 test/
 old/
 job.*
