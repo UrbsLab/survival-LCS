@@ -45,7 +45,7 @@ applications such as informing self-controls in clinical trials
 
 Files with '_copy' are just copies of files to run parallel analysis, all other files are base-code and runner files to run survival-LCS and the experiments. Ouptut folder has all the corresponding outputs for reference and to complete the manuscript.
 
-## Instructions for running Survival-LCS 
+## Running Survival-LCS Experiments
 ### Setup/Requirements
 #### Python Pacakges
 
@@ -76,7 +76,7 @@ These can be install using the following command:
 #### HPC Requirements
 The analysis takes extesnive computational requirements and while it can be run on a local machine it is recommend to run it on an HPC Cluster such as a SLURM based cluster. Our scripts are set up to run it on the SLURM HPC Cluster at Cedars-Sinai.
 
-### How to Run
+### Instructions to Run
 If you're able to ssh into your HPC and Open VS-Code-Server on your local VS-Code, the process is very simple.
 
 1. Clone the respostiory on you HPC instance.
@@ -86,7 +86,13 @@ If you're able to ssh into your HPC and Open VS-Code-Server on your local VS-Cod
 5. Open sim_full_pipeline_HPCNotebook1.ipynb and run all cells to run the base Permutation Testing experiments.
 6. Run respective Jupyter Notebooks to generate output tables and figures.
 
-## 
+## Citation
+
+ACM Reference Format:
+Alexa Woodward, Harsh Bandhey, Jason H. Moore, and Ryan J. Urbanowicz.
+2024. Survival-LCS: A Rule-Based Machine Learning Approach to Survival
+Analysis. In Genetic and Evolutionary Computation Conference (GECCO ’24),
+July 14–18, 2024, Melbourne, VIC, Australia. ACM, New York, NY, USA.
 
 
 <!-- sim_full_pipeline_LCS.py
