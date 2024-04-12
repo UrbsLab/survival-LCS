@@ -76,6 +76,9 @@ These can be install using the following command:
 #### HPC Requirements
 The analysis takes extesnive computational requirements and while it can be run on a local machine it is recommend to run it on an HPC Cluster such as a SLURM based cluster. Our scripts are set up to run it on the SLURM HPC Cluster at Cedars-Sinai.
 
+#### Simulated Dataset Models
+Simulated Dataset model files are need to run the experiment and should be put in `pipeline/simulated_datasets` folder. These files are available upon request.
+
 ### Instructions to Run
 If you're able to ssh into your HPC and Open VS-Code-Server on your local VS-Code, the process is very simple.
 
