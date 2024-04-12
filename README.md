@@ -26,7 +26,7 @@ time and distribution predictions, potentially useful for clinical
 applications such as informing self-controls in clinical trials
 
 
-## Description of Experiment Files.
+## Description of Experiment Files
 
 1. sim_full_pipeline_HPCNotebook1.ipynb -  File to run and save all experimnets and survival-LCS model files on an HPC Cluster.
 2. sim_full_pipeline_HPCNotebook1_coxchecks.ipynb - File to run and save all 100 Feature Dataset Cox experimnets on an HPC Cluster.
