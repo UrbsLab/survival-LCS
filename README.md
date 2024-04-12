@@ -80,7 +80,7 @@ The analysis takes extesnive computational requirements and while it can be run 
 Simulated Dataset model files are need to run the experiment and should be put in `pipeline/simulated_datasets` folder. These files are available upon request.
 
 ### Instructions to Run
-If you're able to ssh into your HPC and Open VS-Code-Server on your local VS-Code, the process is very simple.
+If you're able to ssh into your HPC and Open VS-Code-Server on your local VS-Code, the process is simple.
 
 1. Clone the respostiory on you HPC instance.
 2. Install the requirements to set up the environment.
