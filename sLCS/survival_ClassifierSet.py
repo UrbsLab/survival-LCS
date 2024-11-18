@@ -1,4 +1,4 @@
-from survival_Classifier import Classifier
+from .survival_Classifier import Classifier
 import copy
 import random
 

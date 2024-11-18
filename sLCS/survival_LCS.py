@@ -3,16 +3,16 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import recall_score
 import numpy as np
-from survival_Timer import Timer
-from survival_OfflineEnvironment import OfflineEnvironment
-from survival_ExpertKnowledge import ExpertKnowledge
-from survival_AttributeTracking import AttributeTracking
-from survival_ClassifierSet import ClassifierSet
-from survival_Prediction import Prediction
-from survival_RuleCompaction import RuleCompaction
-from survival_IterationRecord import IterationRecord
-from survival_Pareto import Pareto
-from survival_Metrics import Metrics
+from .survival_Timer import Timer
+from .survival_OfflineEnvironment import OfflineEnvironment
+from .survival_ExpertKnowledge import ExpertKnowledge
+from .survival_AttributeTracking import AttributeTracking
+from .survival_ClassifierSet import ClassifierSet
+from .survival_Prediction import Prediction
+from .survival_RuleCompaction import RuleCompaction
+from .survival_IterationRecord import IterationRecord
+from .survival_Pareto import Pareto
+from .survival_Metrics import Metrics
 import matplotlib.pyplot as plt
 from sksurv.nonparametric import kaplan_meier_estimator
 from sklearn.impute import KNNImputer
@@ -24,9 +24,9 @@ import pickle
 import random
 import pandas as pd
 import math
-import sys
+import sys 
 
-class ExSTraCS(BaseEstimator,ClassifierMixin):
+class survivalLCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learning_iterations=100000,N=1000,nu=1,chi=0.8,mu=0.04,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
                  acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitness_reduction=0.1,theta_sel=0.5,rule_specificity_limit=None,
                  do_correct_set_subsumption=False,do_GA_subsumption=True,selection_method='tournament',do_attribute_tracking=True,
@@ -319,7 +319,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 # fit:
 #-----------------------------------------------------------------------------------------------------------------
     def fit(self, X, y, z):
-        """Scikit-learn required: Supervised training of exstracs
+        """Scikit-learn required: Supervised training of survivalLCS
              Parameters
             X: array-like {n_samples, n_features} Training instances. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC or NAN
             y: array-like {n_samples} Training labels. ALL INSTANCE PHENOTYPES MUST BE NUMERIC NOT NAN OR OTHER TYPE
@@ -561,7 +561,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         elif self.hasTrained and self.learning_iterations != self.iterationCount:
             raise Exception("Pickle not allowed, as there is nothing new to pickle.")
         else:
-            raise Exception("There is no final model to pickle, as the ExSTraCS model has not been trained")
+            raise Exception("There is no final model to pickle, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 # rebootPopulation:
 #-----------------------------------------------------------------------------------------------------------------
@@ -611,7 +611,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 # predict: predicts the time of event (centroid of the maximal overlapping intervals)
 #-----------------------------------------------------------------------------------------------------------------
     def predict(self, X):
-        """Scikit-learn required: Test Accuracy of ExSTraCS
+        """Scikit-learn required: Test Accuracy of survivalLCS
             Parameters
             X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
             Returns
@@ -644,7 +644,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 #-----------------------------------------------------------------------------------------------------------------
 
     def predict_proba(self, X,q): # change this to call getSurvProb survivalPrediction = prediction.getSurvProb()
-        """Scikit-learn required: Test Accuracy of ExSTraCS
+        """Scikit-learn required: Test Accuracy of survivalLCS
             Parameters
             X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
             Returns
@@ -855,7 +855,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             # return self.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train, dataEvents_train, dataEvents_test)
 
         else:
-            raise Exception("There is no final training accuracy to return, as the ExSTraCS model has not been trained")
+            raise Exception("There is no final training accuracy to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -872,7 +872,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 self.population.clearSets()
             return numCovered/len(originalTrainingData[0])
         else:
-            raise Exception("There is no final instance coverage to return, as the ExSTraCS model has not been trained")
+            raise Exception("There is no final instance coverage to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -880,7 +880,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if self.hasTrained:
             return self.population.getAttributeSpecificityList(self)
         else:
-            raise Exception("There is no final attribute specificity list to return, as the ExSTraCS model has not been trained")
+            raise Exception("There is no final attribute specificity list to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -888,7 +888,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if self.hasTrained:
             return self.population.getAttributeAccuracyList(self)
         else:
-            raise Exception("There is no final attribute accuracy list to return, as the ExSTraCS model has not been trained")
+            raise Exception("There is no final attribute accuracy list to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -898,7 +898,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         elif not self.do_attribute_tracking:
             raise Exception("There are no final attribute tracking sums to return, as AT was False")
         else:
-            raise Exception("There are no final attribute tracking sums to return, as the ExSTraCS model has not been trained")
+            raise Exception("There are no final attribute tracking sums to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -935,7 +935,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
 
         else:
             raise Exception(
-                "There are no final attribute cooccurences to return, as the ExSTraCS model has not been trained")
+                "There are no final attribute cooccurences to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -949,7 +949,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
                 retList.append([instance_labels[i], self.AT.attAccuracySums[self.env.formatData.shuffleOrder[i]]])
             return retList
         else:
-            raise Exception("There is no AT scores to return, as the ExSTraCS model has not been trained")
+            raise Exception("There is no AT scores to return, as the survivalLCS model has not been trained")
 
     ##Export Methods##
 #-----------------------------------------------------------------------------------------------------------------
@@ -959,7 +959,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
         if self.hasTrained:
             self.record.exportTrackingToCSV(filename)
         else:
-            raise Exception("There is no tracking data to export, as the ExSTraCS model has not been trained")
+            raise Exception("There is no tracking data to export, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------
@@ -975,7 +975,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             else:
                 self.record.exportPop(self,popSet,headerNames, className, filename)
         else:
-            raise Exception("There is no rule population to export, as the ExSTraCS model has not been trained")
+            raise Exception("There is no rule population to export, as the survivalLCS model has not been trained")
 
     ##Rule Compaction Method ##
 #-----------------------------------------------------------------------------------------------------------------
@@ -989,7 +989,7 @@ class ExSTraCS(BaseEstimator,ClassifierMixin):
             self.rule_compaction = oldRC
             self.saveFinalMetrics()
         else:
-            raise Exception("There is no rule population to compact, as the ExSTraCS model has not been trained")
+            raise Exception("There is no rule population to compact, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------

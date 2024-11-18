@@ -4,7 +4,7 @@ import os
 import sklearn
 import scipy
 import random
-#import csaps
+import importGametes
 import math
 import itertools 
 from sklearn.linear_model import LinearRegression
@@ -13,7 +13,7 @@ from importGametes import *
 from itertools import chain
 from scipy import interpolate
 
-#I need to be able to imput the output of importGametes.py...
+# I need to be able to input the output of importGametes.py...
 '''
 :param gametes: object from importGametes.py
 :param T:       Max time 
@@ -21,10 +21,8 @@ from scipy import interpolate
 :param knots:   Number of knots to generate baseline survival model, default = 8  
 '''
 
-class genSurvSim(importGametes):
+class genSurvSim:
     def __init__(self,import_gametes,T,model,knots = 8): # I need this to parse the gametes model and dataset files
-
-       # temp = importGametes()
         
         self.model = model
         self.X = import_gametes.gametesData

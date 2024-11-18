@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #Import Required Modules-------------------------------
 #from exstracs_constants import *
-from survival_DataManagement import *
+from .survival_DataManagement import *
 import random
 import numpy as np
 from numpy import exp
