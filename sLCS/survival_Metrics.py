@@ -16,7 +16,7 @@ import numpy
 from sklearn.base import BaseEstimator
 from sksurv.metrics import brier_score
 from nonparametric_estimators import CensoringDistributionEstimator, SurvivalFunctionEstimator
-from utils import check_y_survival
+from sLCS.utils import check_y_survival
 from sklearn.utils import check_array, check_consistent_length
 
 #event_indicator = array of eventStatus (was boolean, need to make binary for our purposes)

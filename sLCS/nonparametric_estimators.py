@@ -14,7 +14,7 @@ import numpy
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array, check_consistent_length, check_is_fitted
 
-from utils import check_y_survival
+from .utils import check_y_survival
 
 __all__ = [
     'CensoringDistributionEstimator',

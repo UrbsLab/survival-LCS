@@ -1,11 +1,13 @@
 import pickle
-from survival_ExSTraCS import ExSTraCS
 import os
 import numpy as np
 import csv
 import time
 import sys
 from skrebate import MultiSURF
+import sys
+sys.path.append('..')
+from survival_ExSTraCS import ExSTraCS
 
 def job(experiment_path,cv):
     job_start_time = time.time()
