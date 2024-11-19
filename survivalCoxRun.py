@@ -13,25 +13,31 @@ time_label = "eventTime"
 status_label = "eventStatus"
 instance_label="inst"
 T = 100
+knots = 8
+
+iterations = 50000
 random_state = 42
+
+cv_count = 5
+pmethod = "random"
+isContinuous = True
+nu = 1
+rulepop = 1000
 
 class ExperimentRun:
 
-    def __init__(self, dpath, mpath, opath, mtype, cv, censor, iterations=50000, nu=1, rulepop=1000):
+    def __init__(self, dpath, mpath, opath, mtype, cv, censor):
         self.data_path = dpath
         self.model_path = mpath
         self.output_path = opath
         self.model_type = mtype
         self.cv = cv
         self.censor = censor
-        self.iterations = iterations
-        self.nu = nu
-        self.rulepop = rulepop
         
     def run(self):
-
-        predList = None
-        predProbs = None
+        cb_df = pd.DataFrame()
+        cb_df['times'] = range(T + 1)
+        cb_df.set_index('times',inplace=True)
 
         model_path_censor = self.model_path + '/cens_'+ str(self.censor)
         make_folder(model_path_censor)
@@ -58,6 +64,8 @@ class ExperimentRun:
 
         test_file = self.data_path + '/' + str(self.model_type) + '_cens'+ str(self.censor) + '_surv' + '_CV_'+str(self.cv)+'_Test.txt'
         data_test = pd.read_csv(test_file, sep='\t') #, headers = 0
+        timeLabel = 'eventTime'
+        censorLabel = 'eventStatus'
 
         #Derive the attribute and phenotype array using the phenotype label
         dataFeatures_test = data_test.drop([timeLabel,censorLabel,instID],axis = 1).values
@@ -70,11 +78,6 @@ class ExperimentRun:
         dataEventTimes_test = dataEvents_test[:,0]
         dataEventStatus_test = dataEvents_test[:,1]
 
-
-        start = time.time()
-        ### Train the survival_ExSTraCS model
-        model = survivalLCS(learning_iterations=self.iterations, nu=self.nu, N=self.rulepop)
-        trainedModel = model.fit(dataFeatures_train,dataEventTimes_train,dataEventStatus_train)
 
         scoreEvents_train = np.flip(dataEvents_train, 1)
         scoreEvents_test = np.flip(dataEvents_test, 1)
@@ -89,55 +92,51 @@ class ExperimentRun:
         dataEventStatus_test = dataEventStatus_test.astype('int64')
 
         # -------------------------------------------------------------------------------------------
-        ### Survival Prediction - LCS
+        ### Run other sklearn survival analyses
         #--------------------------------------------------------------------------------------------
-        ##HERE Make this function also generate all of the relevant graphs and save them in the appropriate output file
-        if predList is None:
-            predList = trainedModel.predict(dataFeatures_test)
+
+
+        # Cox Proportional Hazards Model - maybe run this only if features <= 100
+        if dataFeatures_train.shape[1] < 101:
+            CoxPH = make_pipeline(CoxPHSurvivalAnalysis(alpha = 0.00001))
+            est =  CoxPH.fit(dataFeatures_train, scoreEvents_train)
+
+            survs = est.predict_survival_function(dataFeatures_test)
+            cox_times = np.arange(max(min(dataEventTimes_test), min(dataEventTimes_train)), min(max(dataEventTimes_test),max(dataEventTimes_train)))
+            preds = np.asarray([[fn(t) for t in cox_times] for fn in survs])
+
+            try:
+                times, cox_bscores = sksurv.metrics.brier_score(scoreEvents_test, scoreEvents_test, preds, cox_times)
+
+                col_name = 'b_scores_' + \
+                    str(os.path.basename(self.output_path)) + \
+                    '_cens'+ str(self.censor) + \
+                            '_cv' + str(self.cv)
+                
+                cb = pd.DataFrame({'times':times, col_name:cox_bscores})
+                
+                temp_df = cb.copy()
+                temp_df = temp_df.dropna()
+
+                cb.set_index('times',inplace=True)
+
+                cb.to_csv(self.output_path+'/cens_'+str(self.censor)+'/CoxModel_'+str(self.cv)+'_brierscores.csv')
+
+                try:
+                    ibs_value = np.trapz(temp_df[col_name], temp_df['times']) / (list(temp_df['times'])[-1] - list(temp_df['times'])[0])
+                except Exception as e:
+                    ibs_value = np.nan
+                    raise e
+                
+                print("integrated_brier_score: ", ibs_value)
+                with open(self.output_path+'/cens_'+str(self.censor)+'/CoxModel_'+str(self.cv)+'_ibsscore.txt','w') as file:
+                    file.write("Model, " + col_name + '\n')
+                    file.write("Integrated Brier Score, " + str(ibs_value))
+
+            except Exception as e:
+                print(e, 'No Cox brier scores generated')
+                raise e
         else:
-            predList = np.append(predList, trainedModel.predict(dataFeatures_test))
-        # print(predList)
+            print("Comparison approaches not run on datasets with > 100 features")
 
-        if predProbs is None:
-            predProbs = pd.DataFrame(trainedModel.predict_proba(dataFeatures_test, dataEventTimes_test)).T
-        else:
-            predProbs = pd.concat([predProbs, pd.DataFrame(trainedModel.predict_proba(dataFeatures_test, dataEventTimes_test)).T])
-        # print(predProbs.head())
-
-        ### Pickle the model
-        pickle.dump(trainedModel, open(self.model_path+'/cens_'+str(self.censor)+'/ExSTraCS_'+str(self.cv),'wb'))
-        print("Pickled survivalLCS Model #"+str(self.cv))
-
-        loopend = time.time()
-        runtime = loopend - start
-        # runtime_df.loc[len(runtime_df.index)] = [self.model_type,self.censor, self.output_path, dataFeatures_train.shape[1], runtime]
-        # Obtain the integrated brier score
-        try:
-            times, b_scores = trainedModel.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train,scoreEvents_train,scoreEvents_test)
-
-            col_name = 'b_scores_' + \
-                str(os.path.basename(self.output_path)) + \
-                '_cens'+ str(self.censor) + \
-                        '_cv' + str(self.cv)
-
-            tb = pd.DataFrame({'times':times, col_name:b_scores})
-
-            #sum, then average scores
-            self.ibs_df = tb
-            self.ibs_df.set_index('times',inplace=True)
-            self.ibs_df.to_csv(self.output_path+'/cens_'+str(self.censor)+'/ExSTraCS_'+str(self.cv)+'_brierscores.csv')
-
-            self.ibs_value = trainedModel.integrated_b_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train,scoreEvents_train,scoreEvents_test)
-            print("integrated_brier_score: ",self.ibs_value)
-            with open(self.output_path+'/cens_'+str(self.censor)+'/ExSTraCS_'+str(self.cv)+'.txt','w') as file:
-                file.write("Model, " + col_name + '\n')
-                file.write("Integrated Brier Score, " + str(self.ibs_value))
-
-        except Exception as e:
-            print('Error generating integrated Brier scores', e)
-            return e
-        
-        return self.ibs_df
-    
-    def get_output(self):
-        return self.ibs_df
+        return cb_df

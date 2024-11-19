@@ -1,0 +1,3 @@
+sbatch run_sim_cv_dataset_creation.sh
+sbatch run_sim_run_survivalLCS.sh
+sbatch run_sim_run_coxModel.sh

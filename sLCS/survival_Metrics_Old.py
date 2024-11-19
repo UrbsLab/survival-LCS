@@ -250,9 +250,7 @@ class Metrics:
         test_event, test_time = check_y_survival(dataEvents_test)
         #print('min test time;', min(test_time), 'max test time:', max(test_time), "len test time: ", len(test_time))
         predProbs, times = self._check_estimate_2d(predProbs, test_time, times)
-        print(predProbs.shape)
         if predProbs.ndim == 1 and times.shape[0] == 1:
-            print("reshaping")
             predProbs = predProbs.reshape(-1, 1)
 
         # fit IPCW estimator
@@ -275,13 +273,9 @@ class Metrics:
             est = predProbs[:, i]
             is_case = (test_time <= t) & test_event
             is_control = test_time > t
-            try:
-                brier_scores[i] = numpy.mean(numpy.square(est) * is_case.astype(int) / prob_cens_y
-                                            + numpy.square(1.0 - est) * is_control.astype(int) / prob_cens_t[i])
-            except:
-                prob_cens_t_copy = numpy.append(prob_cens_t,[prob_cens_t[-1]]*(len(prob_cens_y) - len(prob_cens_t)))
-                brier_scores[i] = numpy.mean(numpy.square(est) * is_case.astype(int) / prob_cens_y
-                                            + numpy.square(1.0 - est) * is_control.astype(int) / prob_cens_t_copy[i])
+
+            brier_scores[i] = numpy.mean(numpy.square(est) * is_case.astype(int) / prob_cens_y
+                                         + numpy.square(1.0 - est) * is_control.astype(int) / prob_cens_t[i])
 
         return times, brier_scores
 
@@ -359,7 +353,7 @@ class Metrics:
                Statistics in Medicine, vol. 18, no. 17-18, pp. 2529–2545, 1999.
         """
         # Computing the brier scores
-        times, brier_scores = self._brier_score(datEventTimes_train, dataEventTimes_test, predProbs, times)
+        times, brier_scores = brier_score(dataEvents_train, dataEvents_test, predProbs, times)
 
         if times.shape[0] < 2:
             raise ValueError("At least two time points must be given")

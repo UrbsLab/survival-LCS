@@ -1,9 +1,8 @@
-import os
 import sys
 import dask
 import pickle
 import pandas as pd
-from survivalLCSRun import ExperimentRun
+from survivalCoxRun import ExperimentRun
 from sim_utils import get_parameters, get_cluster, run_parellel
 
 homedir = "/home/bandheyh/common/survival-LCS-telo"
@@ -37,14 +36,14 @@ rulepop = 1000
 if DEBUG:
     outputdir = homedir + "/test"
     model_list = ['me']
-    censor_list = [ 0.1 ]
+    censor_list = [ 0.1, 0.4, 0.8 ]
     nfeat_list = ['f100']
     maf_list = ['maf0.2']
     iterations = 1000
     cv_count = 3
 
 ### Create empty brier score DataFrame
-brier_df = pd.DataFrame()
+cox_brier_df = pd.DataFrame()
 
 # make_folder_structure(outputdir, model_list)
 
@@ -70,14 +69,16 @@ for i in range(0,len(model_list)):
 
             for l in range(0, len(censor_list)):
                 for m in range(0, cv_count):
-                    slcs = ExperimentRun(data_path, model_path, output_path, model_type, m, censor_list[l], 
-                                        iterations, nu, rulepop)
+                    slcs = ExperimentRun(data_path, model_path, output_path, model_type, m, censor_list[l])
                     if HPC == False:
                         ibs = slcs.run()
                         brier_df_list.append(ibs)
                     else:
                         job_obj_list.append(slcs)
 
+print(job_obj_list)
+
+# dask.config.set({"distributed.worker.memory.terminate": False})
 cluster = get_cluster(output_path=homedir)
 
 if HPC == True:
@@ -89,5 +90,6 @@ if HPC == True:
 
 print(results)
 
-with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
+with open(outputdir + '/results_coxmodels_parallel.pkl', 'wb') as file:
     pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
+

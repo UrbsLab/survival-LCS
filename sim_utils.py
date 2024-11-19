@@ -34,7 +34,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                    memory=str(memory) + "G",
                                    walltime="24:00:00",
                                    log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=400)
+            cluster.adapt(maximum_jobs=200)
         elif cluster_type == "LSF":
             cluster = LSFCluster(queue=queue,
                                  cores=1,
@@ -42,7 +42,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                  memory=str(memory) + "G",
                                  walltime="24:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=400)
+            cluster.adapt(maximum_jobs=200)
         elif cluster_type == 'UGE':
             cluster = SGECluster(queue=queue,
                                  cores=1,
@@ -50,7 +50,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                  resource_spec="mem_free=" + str(memory) + "G",
                                  walltime="24:00:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=400)
+            cluster.adapt(maximum_jobs=200)
         elif cluster_type == 'Local':
             c = Client()
             cluster = c.cluster
@@ -128,3 +128,8 @@ def get_parameters(homedir, outputdir, models, nfeat, maf, i, j, k):
     return g, mtype, d, m, o, e, m0_path, m0_type, m1_path, m1_type
 
 
+def run_parellel(model):
+    try:
+        return model.run()
+    except Exception as e:
+        return e
