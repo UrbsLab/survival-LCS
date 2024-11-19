@@ -17,46 +17,14 @@ from eli5.sklearn import PermutationImportance
 from sksurv.ensemble import RandomSurvivalForest
 from sklearn.pipeline import make_pipeline
 from sksurv.linear_model import CoxPHSurvivalAnalysis
-from sksurv.metrics import integrated_brier_score
-from sklearn.impute import KNNImputer
-from sklearn.impute import SimpleImputer
-
 
 
 from importGametes import *
 from survival_data_simulator import *
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.metrics import balanced_accuracy_score
-from sklearn.metrics import recall_score
-from survival_Timer import Timer
-from survival_OfflineEnvironment import OfflineEnvironment
-from survival_ExpertKnowledge import ExpertKnowledge
-from survival_AttributeTracking import AttributeTracking
-from survival_ClassifierSet import ClassifierSet
-from survival_Prediction import Prediction
-from survival_RuleCompaction import RuleCompaction
-from survival_IterationRecord import IterationRecord
-from survival_Pareto import Pareto
-from survival_Metrics import Metrics
-from survival_ExSTraCS import ExSTraCS
-from AnalysisPhase1_pretrained import *
-from AnalysisPhase2 import *
-from NetworkVisualization import *
+from sLCS.survival_LCS import survivalLCS
 from cvPartitioner import *
 
-#Need to write a job script for this
-#from XXX import full_job
-
-
-'''Sample Run Code:
-python AnalysisPhase1_pretrained.py --o /Users/robert/Desktop/outputs/test1/mp6/viz-outputs --e root --d /Users/robert/Desktop/outputs/test1/mp6/CVDatasets --m /Users/robert/Desktop/outputs/test1/mp6/training/pickledModels --inst Instance --cv 3 --cluster 0
-:param gametes: XXX
-:param T:       Max time
-:param model:   Must be string. Model type, allowed values: "main_effect, "2way_epistasis","additive", "heterogeneous"
-:param knots:   Number of knots to generate baseline survival model, default = 8
-'''
-
-class survivalLCS():
+class survivalLCSPipeline():
     def __init__(self,g,mtype,d,m,o,e, brier_df,cox_brier_df,m0_path = None, m0_type = None,m1_path =None,m1_type =None,T = 100,k = 8,c = [0.1],time_label = "eventTime",status_label = "eventStatus",instance_label="inst",cv = 5,pmethod = "random",random_state = None,isContinuous = True, iterations =50000, nu = 1, rp = 1000, cluster=1,m1=2,m2=3):
 
 

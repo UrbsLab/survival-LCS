@@ -12,3 +12,5 @@ dask_logs/
 simulated_datasets/
 test/
 old/
+job.o
+job.e

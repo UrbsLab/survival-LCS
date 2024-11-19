@@ -195,7 +195,7 @@ class Prediction:
 #-----------------------------------------------------------------------------------------------------------------
 # plotSurvDist: NOT CALLED ANYWHERE YET
 #-----------------------------------------------------------------------------------------------------------------    
-    def plotSurvDist(self, survProb):
+    def plotSurvDist(self, survProb, empDist=None):
         plt.figure(figsize=(10, 10))
         plt.vlines(empDist, 0, 0.05, linestyles ="solid", colors ="k")
         plt.xlabel('Time')

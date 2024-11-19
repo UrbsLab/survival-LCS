@@ -683,7 +683,8 @@ class survivalLCS(BaseEstimator,ClassifierMixin):
 #-----------------------------------------------------------------------------------------------------------------
     def score(self,X,y,z): #change this to C-index code
         predList = self.predict(X)
-        getCIndex = Metrics(X,y,z,predList)
+        p, q, predProbs = None, None, None
+        getCIndex = Metrics(X,p,q,y,z,predList,predProbs)
         c_index = getCIndex._estimate_concordance_index(y,z,predList,tied_tol=1e-8)
         return c_index
 
