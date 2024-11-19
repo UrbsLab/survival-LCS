@@ -36,9 +36,11 @@ class ExperimentRun:
 
         model_path_censor = self.model_path + '/cens_'+ str(self.censor)
         make_folder(model_path_censor)
+        make_folder(model_path_censor+'/Perm/')
 
         output_path_censor = self.output_path + '/cens_'+ str(self.censor)
         make_folder(output_path_censor)
+        make_folder(output_path_censor+'/Perm/')
 
         train_file = self.data_path+ '/' + str(self.model_type) + '_cens'+ str(self.censor) + '_surv' + '_CV_'+str(self.cv)+'_Train.txt'
         data_train = pd.read_csv(train_file, sep='\t') #, header = 0
@@ -107,7 +109,7 @@ class ExperimentRun:
         # print(predProbs.head())
 
         ### Pickle the model
-        pickle.dump(trainedModel, open(self.model_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + (self.perm) +'_ExSTraCS_'+str(self.cv),'wb'))
+        pickle.dump(trainedModel, open(self.model_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + str(self.perm) +'_ExSTraCS_'+str(self.cv),'wb'))
         print("Pickled survivalLCS Model #"+str(self.cv))
 
         loopend = time.time()
@@ -128,11 +130,11 @@ class ExperimentRun:
             #sum, then average scores
             self.ibs_df = tb
             self.ibs_df.set_index('times',inplace=True)
-            self.ibs_df.to_csv(self.output_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + (self.perm) + '_ExSTraCS_'+str(self.cv)+'_brierscores.csv')
+            self.ibs_df.to_csv(self.output_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + str(self.perm) + '_ExSTraCS_'+str(self.cv)+'_brierscores.csv')
 
             self.ibs_value = trainedModel.integrated_b_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train,scoreEvents_train,scoreEvents_test)
             print("integrated_brier_score: ",self.ibs_value)
-            with open(self.output_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + (self.perm) + '_ExSTraCS_'+str(self.cv)+'.txt','w') as file:
+            with open(self.output_path+'/cens_'+str(self.censor)+'/Perm/Perm_' + str(self.perm) + '_ExSTraCS_'+str(self.cv)+'.txt','w') as file:
                 file.write("Model, " + col_name + '\n')
                 file.write("Integrated Brier Score, " + str(self.ibs_value))
 

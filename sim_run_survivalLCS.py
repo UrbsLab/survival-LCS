@@ -91,22 +91,21 @@ print("No of jobs:", len(job_obj_list))
 cluster = get_cluster(output_path=homedir)
 
 if HPC == True:
+    cluster = get_cluster(output_path=homedir)
     delayed_results = []
     for model in job_obj_list:
         brier_df = dask.delayed(run_parellel)(model)
         delayed_results.append(brier_df)
     results = dask.compute(*delayed_results)
-
-# cluster.close()
-print(print(cluster.scheduler_info()))
-
-while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
+    
+    # cluster.close()
     print(print(cluster.scheduler_info()))
-    sleep(1.0)
 
-print("Errors:", sum(type(x) != pd.DataFrame for x in results))
+    while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
+        print(print(cluster.scheduler_info()))
+        sleep(1.0)
 
-print(results)
+    print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 
-with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
-    pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
+    with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
+        pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
