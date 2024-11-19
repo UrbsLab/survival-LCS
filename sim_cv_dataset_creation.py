@@ -10,7 +10,7 @@ homedir = "/home/bandheyh/common/survival-LCS-telo"
 sys.path.append(homedir)
 
 HPC = True
-DEBUG = True
+DEBUG = False
 
 outputdir = homedir + "/pipeline"
 model_list = ['me', 'epi', 'het', 'add']
@@ -36,7 +36,7 @@ rulepop = 1000
 if DEBUG:
     outputdir = homedir + "/test"
     model_list = ['me']
-    censor_list = [ 0.1 ]
+    censor_list = [0.1, 0.4, 0.8]
     nfeat_list = ['f100']
     maf_list = ['maf0.2']
     iterations = 1000

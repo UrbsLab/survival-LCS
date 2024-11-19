@@ -25,7 +25,7 @@ def make_folder_structure(outputdir, models, overwrite=True):
         raise NotImplementedError
 
 
-def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
+def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=8):
     client = None
     try:
         if cluster_type == 'SLURM':
@@ -34,7 +34,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                    memory=str(memory) + "G",
                                    walltime="24:00:00",
                                    log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == "LSF":
             cluster = LSFCluster(queue=queue,
                                  cores=1,
@@ -42,7 +42,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                  memory=str(memory) + "G",
                                  walltime="24:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == 'UGE':
             cluster = SGECluster(queue=queue,
                                  cores=1,
@@ -50,7 +50,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
                                  resource_spec="mem_free=" + str(memory) + "G",
                                  walltime="24:00:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == 'Local':
             c = Client()
             cluster = c.cluster
@@ -70,7 +70,7 @@ def get_parameters(homedir, outputdir, models, nfeat, maf, i, j, k):
         'EDM-1/'+str(models[i]) + \
         '_' + str(nfeat[j]) + '_' + str(maf[k]) + '_' + 'EDM-1_01.txt'
     dtype = str(models[i]) + '_' + str(nfeat[j]) + '_' + str(maf[k])
-    print(g)
+    # print(g)
 
     d = outputdir + '/' + 'cv_sim_data/cv_' + str(models[i]) + '/' + dtype
     m = outputdir + '/' + 'pickled_cv_models/' + str(models[i]) + '/' + dtype
@@ -112,7 +112,7 @@ def get_parameters(homedir, outputdir, models, nfeat, maf, i, j, k):
 
 
     e = "testallsims"
-    print(str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k]))
+    # print(str(models[i])+'_'+str(nfeat[j])+'_'+str(maf[k]))
 
     # self.gametes_data_path = g
     # self.gametes_model_path_0 = m0_path

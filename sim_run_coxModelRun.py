@@ -92,4 +92,3 @@ print(results)
 
 with open(outputdir + '/results_coxmodels_parallel.pkl', 'wb') as file:
     pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
-

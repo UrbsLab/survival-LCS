@@ -139,4 +139,4 @@ class ExperimentRun:
         else:
             print("Comparison approaches not run on datasets with > 100 features")
 
-        return cb_df
+        return cb
