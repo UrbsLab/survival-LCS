@@ -12,5 +12,5 @@ eli5
 scikit-survival==0.21.0
 ipython
 notebook
-dask
+dask==2022.7.0
 dask-jobqueue

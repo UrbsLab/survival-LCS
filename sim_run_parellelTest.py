@@ -13,6 +13,7 @@ cluster = get_cluster(output_path=homedir)
 class Test:
     def run(self):
         print("Running")
+        return 1
 
 print("Here 1")
 
@@ -25,5 +26,7 @@ if HPC == True:
         delayed_results.append(brier_df)
     print("Here 2")
     results = dask.compute(*delayed_results)
+
+cluster.close()
 
 print(results)

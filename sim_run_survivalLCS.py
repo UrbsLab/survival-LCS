@@ -2,7 +2,10 @@ import os
 import sys
 import dask
 import pickle
+import shutil
 import pandas as pd
+from time import sleep
+from dask.distributed import progress
 from survivalLCSRun import ExperimentRun
 from sim_utils import get_parameters, get_cluster, run_parellel
 
@@ -10,7 +13,12 @@ homedir = "/home/bandheyh/common/survival-LCS-telo"
 sys.path.append(homedir)
 
 HPC = True
-DEBUG = True
+DEBUG = False
+
+if os.path.exists(homedir + '/dask_logs/'):
+    shutil.rmtree(homedir + '/dask_logs/')
+if not os.path.exists(homedir + '/dask_logs/'):
+    os.mkdir(homedir + '/dask_logs/')
 
 outputdir = homedir + "/pipeline"
 model_list = ['me', 'epi', 'het', 'add']
@@ -27,7 +35,7 @@ knots = 8
 iterations = 50000
 random_state = 42
 
-print(random_state)
+print("Random Seed:", random_state)
 cv_count = 5
 pmethod = "random"
 isContinuous = True
@@ -78,6 +86,8 @@ for i in range(0,len(model_list)):
                     else:
                         job_obj_list.append(slcs)
 
+print("No of jobs:", len(job_obj_list))
+
 cluster = get_cluster(output_path=homedir)
 
 if HPC == True:
@@ -86,6 +96,15 @@ if HPC == True:
         brier_df = dask.delayed(run_parellel)(model)
         delayed_results.append(brier_df)
     results = dask.compute(*delayed_results)
+
+# cluster.close()
+print(print(cluster.scheduler_info()))
+
+while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
+    print(print(cluster.scheduler_info()))
+    sleep(1.0)
+
+print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 
 print(results)
 

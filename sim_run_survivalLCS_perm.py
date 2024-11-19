@@ -4,20 +4,21 @@ import dask
 import pickle
 import shutil
 import pandas as pd
+from time import sleep
 from dask.distributed import progress
-from survivalCoxRun import ExperimentRun
+from survivalLCSPermRun import ExperimentRun
 from sim_utils import get_parameters, get_cluster, run_parellel
 
 homedir = "/home/bandheyh/common/survival-LCS-telo"
 sys.path.append(homedir)
 
+HPC = True
+DEBUG = True
+
 if os.path.exists(homedir + '/dask_logs/'):
     shutil.rmtree(homedir + '/dask_logs/')
 if not os.path.exists(homedir + '/dask_logs/'):
     os.mkdir(homedir + '/dask_logs/')
-
-HPC = True
-DEBUG = False
 
 outputdir = homedir + "/pipeline"
 model_list = ['me', 'epi', 'het', 'add']
@@ -41,17 +42,19 @@ isContinuous = True
 nu = 1
 rulepop = 1000
 
+n_perm = 5
+
 if DEBUG:
     outputdir = homedir + "/test"
     model_list = ['me']
-    censor_list = [ 0.1, 0.4, 0.8 ]
+    censor_list = [ 0.1 ]
     nfeat_list = ['f100']
     maf_list = ['maf0.2']
     iterations = 1000
     cv_count = 3
 
 ### Create empty brier score DataFrame
-cox_brier_df = pd.DataFrame()
+brier_df = pd.DataFrame()
 
 # make_folder_structure(outputdir, model_list)
 
@@ -60,8 +63,6 @@ brier_df_list = list()
 
 for i in range(0,len(model_list)):
     for j in range(0,len(nfeat_list)):
-        # if nfeat_list[j] != 'f100': 
-        #     continue
         for k in range(0,len(maf_list)):
             g, mtype, d, m, o, e, m0_path, m0_type, m1_path, m1_type = get_parameters(homedir, outputdir, 
                                                                                       model_list, nfeat_list, maf_list, 
@@ -79,16 +80,17 @@ for i in range(0,len(model_list)):
 
             for l in range(0, len(censor_list)):
                 for m in range(0, cv_count):
-                    slcs = ExperimentRun(data_path, model_path, output_path, model_type, m, censor_list[l])
-                    if HPC == False:
-                        ibs = slcs.run()
-                        brier_df_list.append(ibs)
-                    else:
-                        job_obj_list.append(slcs)
+                        for k in range(0, n_perm):
+                            slcs = ExperimentRun(data_path, model_path, output_path, model_type, m, censor_list[l], k,
+                                                iterations, nu, rulepop)
+                            if HPC == False:
+                                ibs = slcs.run()
+                                brier_df_list.append(ibs)
+                            else:
+                                job_obj_list.append(slcs)
 
 print("No of jobs:", len(job_obj_list))
 
-# dask.config.set({"distributed.worker.memory.terminate": False})
 cluster = get_cluster(output_path=homedir)
 
 if HPC == True:
@@ -98,11 +100,16 @@ if HPC == True:
         delayed_results.append(brier_df)
     results = dask.compute(*delayed_results)
 
-progress(results)
+# cluster.close()
+print(print(cluster.scheduler_info()))
+
+while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
+    print(print(cluster.scheduler_info()))
+    sleep(1.0)
+
+print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 
 print(results)
 
-# cluster.close()
-
-with open(outputdir + '/results_coxmodels_parallel.pkl', 'wb') as file:
+with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
     pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
