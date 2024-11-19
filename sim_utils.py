@@ -67,7 +67,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=4):
 def get_parameters(homedir, outputdir, models, nfeat, maf, i, j, k):
 
     g = homedir + '/' + 'simulated_datasets/' + \
-        'EDM-1_one_of_each/'+str(models[i]) + \
+        'EDM-1/'+str(models[i]) + \
         '_' + str(nfeat[j]) + '_' + str(maf[k]) + '_' + 'EDM-1_01.txt'
     dtype = str(models[i]) + '_' + str(nfeat[j]) + '_' + str(maf[k])
     print(g)
@@ -78,15 +78,15 @@ def get_parameters(homedir, outputdir, models, nfeat, maf, i, j, k):
 
     ### Set m0_path
     if models[i] in ['me','add','het']:
-        m0_path = homedir+'/'+'simulated_datasets/'+'EDM-1_one_of_each/model_files/me_h0.2_'+str(maf[k])+'_Models.txt'
+        m0_path = homedir+'/'+'simulated_datasets/'+'EDM-1/model_files/me_h0.2_'+str(maf[k])+'_Models.txt'
     else:
-        m0_path = homedir+'/'+'simulated_datasets/'+'EDM-1_one_of_each/model_files/epi_h0.2_'+str(maf[k])+'_Models.txt'
+        m0_path = homedir+'/'+'simulated_datasets/'+'EDM-1/model_files/epi_h0.2_'+str(maf[k])+'_Models.txt'
 
     ### Set m1_path
     if models[i] in ['me','epi']:
         m1_path = None
     else:
-        m1_path = homedir+'/'+'simulated_datasets/'+'EDM-1_one_of_each/model_files/epi_h0.2_'+str(maf[k])+'_Models.txt'
+        m1_path = homedir+'/'+'simulated_datasets/'+'EDM-1/model_files/epi_h0.2_'+str(maf[k])+'_Models.txt'
 
     ### Set m0_type
     if models[i] in ['me','add','het']:

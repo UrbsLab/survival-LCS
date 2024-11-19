@@ -6,8 +6,9 @@ pipeline/cv_sim_data/
 pipeline/pickled_cv_models/
 pipeline/sim_lcs_output/
 pipeline/dask_logs/
-pipeline/simulated_datasets/EDM-1_one_of_each.zip
-pipeline/simulated_datasets/EDM-1_one_of_each/
+pipeline/simulated_datasets/EDM-1.zip
+pipeline/simulated_datasets/EDM-1/
+logs/
 dask_logs/
 simulated_datasets/
 test/

@@ -291,7 +291,7 @@ class survivalLCSPipeline():
 
                 start = time.time()
                 ### Train the survival_ExSTraCS model
-                model = ExSTraCS(learning_iterations = self.iterations,nu=self.nu,N=self.rulepop)
+                model = survialLCS(learning_iterations = self.iterations,nu=self.nu,N=self.rulepop)
                 self.trainedModel = model.fit(dataFeatures_train,dataEventTimes_train,dataEventStatus_train)
 
 
