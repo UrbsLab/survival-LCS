@@ -63,6 +63,8 @@ brier_df_list = list()
 
 for i in range(0,len(model_list)):
     for j in range(0,len(nfeat_list)):
+        if nfeat_list[j] != 'f100': 
+            continue
         for k in range(0,len(maf_list)):
             g, mtype, d, m, o, e, m0_path, m0_type, m1_path, m1_type = get_parameters(homedir, outputdir, 
                                                                                       model_list, nfeat_list, maf_list, 

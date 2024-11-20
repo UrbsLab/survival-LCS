@@ -9,6 +9,7 @@ pipeline/sim_lcs_output/
 pipeline/dask_logs/
 pipeline/simulated_datasets/EDM-1.zip
 pipeline/simulated_datasets/EDM-1/
+output/pipeline-csvfiles.zip
 logs/
 dask_logs/
 simulated_datasets/
