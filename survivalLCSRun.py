@@ -17,7 +17,7 @@ random_state = 42
 
 class ExperimentRun:
 
-    def __init__(self, dpath, mpath, opath, mtype, cv, censor, iterations=50000, nu=1, rulepop=1000):
+    def __init__(self, dpath, mpath, opath, mtype, cv, censor, iterations=200000, nu=1, rulepop=2000):
         self.data_path = dpath
         self.model_path = mpath
         self.output_path = opath

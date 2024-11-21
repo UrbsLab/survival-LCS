@@ -15,14 +15,14 @@ instance_label="inst"
 T = 100
 knots = 8
 
-iterations = 50000
+iterations = 200000
 random_state = 42
 
 cv_count = 5
 pmethod = "random"
 isContinuous = True
 nu = 1
-rulepop = 1000
+rulepop = 2000
 
 class ExperimentRun:
 

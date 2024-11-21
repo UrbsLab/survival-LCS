@@ -4,6 +4,7 @@ import dask
 import pickle
 import shutil
 import pandas as pd
+from time import sleep
 from dask.distributed import progress
 from survivalCoxRun import ExperimentRun
 from sim_utils import get_parameters, get_cluster, run_parellel
@@ -31,7 +32,7 @@ instance_label="inst"
 T = 100
 knots = 8
 
-iterations = 50000
+iterations = 200000
 random_state = 42
 
 print("Random Seed:", random_state)
@@ -39,7 +40,7 @@ cv_count = 5
 pmethod = "random"
 isContinuous = True
 nu = 1
-rulepop = 1000
+rulepop = 2000
 
 if DEBUG:
     outputdir = homedir + "/test"
@@ -60,8 +61,8 @@ brier_df_list = list()
 
 for i in range(0,len(model_list)):
     for j in range(0,len(nfeat_list)):
-        # if nfeat_list[j] != 'f100': 
-        #     continue
+        if nfeat_list[j] != 'f100': 
+            continue
         for k in range(0,len(maf_list)):
             g, mtype, d, m, o, e, m0_path, m0_type, m1_path, m1_type = get_parameters(homedir, outputdir, 
                                                                                       model_list, nfeat_list, maf_list, 
@@ -88,9 +89,6 @@ for i in range(0,len(model_list)):
 
 print("No of jobs:", len(job_obj_list))
 
-# dask.config.set({"distributed.worker.memory.terminate": False})
-cluster = get_cluster(output_path=homedir)
-
 if HPC == True:
     cluster = get_cluster(output_path=homedir)
     delayed_results = []
@@ -99,12 +97,12 @@ if HPC == True:
         delayed_results.append(brier_df)
     results = dask.compute(*delayed_results)
     
-    # cluster.close()
     # print(print(cluster.scheduler_info()))
 
-    # while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
-    #     print(print(cluster.scheduler_info()))
-    #     sleep(1.0)
+    sleep(10)
+    while ((len(cluster.scheduler_info()["workers"]) > 0)):
+        print("Running", len(cluster.scheduler_info()["workers"]), "workers")
+        sleep(10)
 
     print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 

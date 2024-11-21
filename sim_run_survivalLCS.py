@@ -32,7 +32,7 @@ instance_label="inst"
 T = 100
 knots = 8
 
-iterations = 50000
+iterations = 200000
 random_state = 42
 
 print("Random Seed:", random_state)
@@ -40,7 +40,7 @@ cv_count = 5
 pmethod = "random"
 isContinuous = True
 nu = 1
-rulepop = 1000
+rulepop = 2000
 
 if DEBUG:
     outputdir = homedir + "/test"
@@ -88,8 +88,6 @@ for i in range(0,len(model_list)):
 
 print("No of jobs:", len(job_obj_list))
 
-cluster = get_cluster(output_path=homedir)
-
 if HPC == True:
     cluster = get_cluster(output_path=homedir)
     delayed_results = []
@@ -101,11 +99,19 @@ if HPC == True:
     # cluster.close()
     print(print(cluster.scheduler_info()))
 
-    while ((cluster.status == "running") or (len(cluster.scheduler_info()["workers"]) > 0)):
-        print(print(cluster.scheduler_info()))
-        sleep(1.0)
+    while ((len(cluster.scheduler_info()["workers"]) > 0)):
+        # print("Running", len(cluster.scheduler_info()["workers"]), "workers")
+        sleep(60)
+
+    print("Finished")
 
     print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 
     with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
         pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
+    
+    error_list = [type(x) != pd.DataFrame for x in results]
+
+    with open(outputdir + '/errors_survivalLCS_parallel.pkl', 'wb') as file:
+        pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
+

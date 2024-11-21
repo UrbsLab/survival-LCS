@@ -1,15 +1,8 @@
 __pycache__
 .ipynb_checkpoints/
 pipeline/
-pipeline/*.csv
-pipeline/*.pkl
-pipeline/cv_sim_data/
-pipeline/pickled_cv_models/
-pipeline/sim_lcs_output/
-pipeline/dask_logs/
-pipeline/simulated_datasets/EDM-1.zip
-pipeline/simulated_datasets/EDM-1/
-output/pipeline-csvfiles.zip
+pipeline1/
+output/*.zip
 logs/
 dask_logs/
 simulated_datasets/
