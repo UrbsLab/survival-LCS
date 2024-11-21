@@ -5,6 +5,8 @@ import math
 import sys
 import numpy as np
 import sys
+sys.path.append('../')
+from sLCS.survival_LCS import survivalLCS
 sys.setrecursionlimit(100000000)
 
 def job(experiment_path):

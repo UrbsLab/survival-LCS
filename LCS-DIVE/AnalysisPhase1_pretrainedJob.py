@@ -6,8 +6,8 @@ import time
 import sys
 from skrebate import MultiSURF
 import sys
-sys.path.append('..')
-from survival_ExSTraCS import ExSTraCS
+sys.path.append('../')
+from sLCS.survival_LCS import survivalLCS
 
 def job(experiment_path,cv):
     job_start_time = time.time()

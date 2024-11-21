@@ -14,6 +14,8 @@ from sklearn.metrics import silhouette_score
 import matplotlib as mpl
 from Utilities import find_elbow
 import sys
+sys.path.append('../')
+from sLCS.survival_LCS import survivalLCS
 sys.setrecursionlimit(100000000)
 
 def job(experiment_path, rule_height_factor):
