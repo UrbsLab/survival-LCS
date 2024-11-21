@@ -42,7 +42,7 @@ isContinuous = True
 nu = 1
 rulepop = 2000
 
-n_perm = 5
+n_perm = 20
 
 if DEBUG:
     outputdir = homedir + "/test"
@@ -110,7 +110,7 @@ if HPC == True:
 
     print("Errors:", sum(type(x) != pd.DataFrame for x in results))
 
-    print(results)
+    # print(results)
 
     with open(outputdir + '/results_survivalLCS_perm_parallel.pkl', 'wb') as file:
         pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)

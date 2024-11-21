@@ -121,9 +121,9 @@ class ExperimentRun:
 
             col_name = 'b_scores_' + \
                 str(os.path.basename(self.output_path)) + \
-                    'perm' + str(self.perm) + \
                         '_cens' + str(self.censor) + \
-                            '_cv' + str(self.cv)
+                            'perm' + str(self.perm) + \
+                                '_cv' + str(self.cv)
 
             tb = pd.DataFrame({'times':times, col_name:b_scores})
 
