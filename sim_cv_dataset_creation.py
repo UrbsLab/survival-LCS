@@ -65,6 +65,7 @@ for i in range(0,len(model_list)):
             model0_type = m0_type
             model1_type = m1_type
             model_type = mtype
+            distribution_type = "ranndomspline"
 
             make_folder(data_path)
             make_folder(output_path)

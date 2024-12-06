@@ -22,7 +22,7 @@ from scipy import interpolate
 '''
 
 class genSurvSim:
-    def __init__(self,import_gametes,T,model,knots = 8): # I need this to parse the gametes model and dataset files
+    def __init__(self,import_gametes,T,model,distribution_type="randomspline"): # I need this to parse the gametes model and dataset files
         
         self.model = model
         self.X = import_gametes.gametesData
@@ -32,12 +32,24 @@ class genSurvSim:
         self.survival = None
         self.baseline = None
         self.T = T
-        self.knots = knots
+        self.d_type = distribution_type
 
+    def baseline_build(self,T,distribution_type="randomspline"):
+        if distribution_type.lower() == "gaussian":
+            return self.baseline_build_normal(self.T)
+        elif distribution_type.lower() == "gamma":
+            return self.baseline_build_gamma(self.T)
+        elif distribution_type.lower() == "weibull":
+            return self.baseline_build_weibull(self.T)
+        elif distribution_type.lower() == "random": 
+            return self.baseline_build_random(self.T)
+        elif distribution_type.lower() == "randomspline": 
+            return self.baseline_build_random_spline(self.T)
+        else:
+            raise ValueError("Invalid distribution type. Choose from: 'gaussian', 'lognormal', 'weibull', 'random_spline'.")
 
-        
-    
-    def baseline_build(self,T, knots):
+    def baseline_build_random_spline(self,T):
+        knots = 8
         time = range(1,(T+1))
         k = sorted([1, T+1] +  random.sample(range(2, T), knots)) #sample a range of values (= to #of knots) starting with 1 and ending with T+1
         heights = sorted([0,1] + list(np.random.uniform(size = knots))) #sample from the uniform distribution, bookend by o and 1
@@ -57,7 +69,162 @@ class genSurvSim:
         
         self.baseline = baseline
         return self.baseline
+    
+    def baseline_build_random(self, T):
+        """
+        Build baseline survival data using a random distribution.
 
+        :param T: Max time
+        :return: Baseline survival data as a DataFrame
+        """
+        time = np.arange(1, T + 1)
+        
+        # Generate random failure probabilities
+        failure_PDF = np.random.random(size=T)
+        
+        # Normalize the failure PDF to sum to 1 for proper probabilities
+        failure_PDF = failure_PDF / np.sum(failure_PDF)
+        
+        # Calculate the CDF from the PDF
+        failure_CDF = np.cumsum(failure_PDF)
+        
+        # Survival function is 1 - CDF
+        survivor = 1 - failure_CDF
+        
+        # Hazard function is PDF / survival
+        hazard = failure_PDF / survivor
+        hazard[survivor == 0] = 0  # Avoid division by zero
+        
+        # Create the baseline DataFrame
+        baseline = pd.DataFrame({
+            'time': time,
+            'failure_PDF': failure_PDF,
+            'failure_CDF': failure_CDF,
+            'survivor': survivor,
+            'hazard': hazard
+        })
+        
+        self.baseline = baseline
+        return self.baseline
+
+    def baseline_build_normal(self, T, mu=0.5, sigma=0.1):
+        """
+        Build baseline survival data using a normal distribution.
+
+        :param T: Max time
+        :param knots: Number of knots (not used in this implementation, but kept for compatibility)
+        :param mu: Mean of the normal distribution
+        :param sigma: Standard deviation of the normal distribution
+        :return: Baseline survival data as a DataFrame
+        """
+        time = np.arange(1, T + 1)
+        
+        # Generate failure probabilities using the normal distribution's PDF
+        failure_PDF = scipy.stats.norm.pdf(time, loc=mu * T, scale=sigma * T)
+        
+        # Normalize the failure PDF to sum to 1 for proper probabilities
+        failure_PDF = failure_PDF / np.sum(failure_PDF)
+        
+        # Calculate the CDF from the PDF
+        failure_CDF = np.cumsum(failure_PDF)
+        
+        # Survival function is 1 - CDF
+        survivor = 1 - failure_CDF
+        
+        # Hazard function is PDF / survival
+        hazard = failure_PDF / survivor
+        hazard[survivor == 0] = 0  # Avoid division by zero
+        
+        # Create the baseline DataFrame
+        baseline = pd.DataFrame({
+            'time': time,
+            'failure_PDF': failure_PDF,
+            'failure_CDF': failure_CDF,
+            'survivor': survivor,
+            'hazard': hazard
+        })
+        
+        self.baseline = baseline
+        return self.baseline
+
+    def baseline_build_weibull(self, T, shape=0.63, scale=0.33):
+        """
+        Build baseline survival data using a Weibull distribution.
+
+        :param T: Max time
+        :param shape: Shape parameter (k) of the Weibull distribution
+        :param scale: Scale parameter (λ) of the Weibull distribution
+        :return: Baseline survival data as a DataFrame
+        """
+        time = np.arange(1, T + 1)
+        
+        # Generate failure probabilities using the Weibull distribution's PDF
+        failure_PDF = scipy.stats.weibull_min.pdf(time, c=shape, scale=scale * T)
+        
+        # Normalize the failure PDF to sum to 1 for proper probabilities
+        failure_PDF = failure_PDF / np.sum(failure_PDF)
+        
+        # Calculate the CDF from the PDF
+        failure_CDF = np.cumsum(failure_PDF)
+        
+        # Survival function is 1 - CDF
+        survivor = 1 - failure_CDF
+        
+        # Hazard function is PDF / survival
+        hazard = failure_PDF / survivor
+        hazard[survivor == 0] = 0  # Avoid division by zero
+        
+        # Create the baseline DataFrame
+        baseline = pd.DataFrame({
+            'time': time,
+            'failure_PDF': failure_PDF,
+            'failure_CDF': failure_CDF,
+            'survivor': survivor,
+            'hazard': hazard
+        })
+        
+        self.baseline = baseline
+        return self.baseline
+    
+    def baseline_build_gamma(self, T, shape=2.0, scale=10.0):
+        """
+        Build baseline survival data using a Gamma distribution.
+
+        :param T: Max time
+        :param shape: Shape parameter (k) of the Gamma distribution
+        :param scale: Scale parameter (θ) of the Gamma distribution
+        :return: Baseline survival data as a DataFrame
+        """
+        # Generate time points
+        time = np.arange(1, T + 1)
+        
+        # Calculate the failure CDF using the Gamma distribution
+        failure_CDF = scipy.stats.gamma.cdf(time, a=shape, scale=scale)
+        
+        # Ensure CDF is normalized (should already be, but to be consistent)
+        failure_CDF = np.clip(failure_CDF, 0, 1)
+        
+        # Calculate the failure PDF
+        failure_PDF = np.diff(np.concatenate(([0], failure_CDF)))
+        
+        # Calculate the survival function
+        survivor = 1 - failure_CDF
+        
+        # Calculate the hazard function
+        hazard = failure_PDF / survivor
+        hazard[survivor == 0] = 0  # Avoid division by zero
+        
+        # Create the baseline DataFrame
+        baseline = pd.DataFrame({
+            'time': time,
+            'failure_PDF': failure_PDF,
+            'failure_CDF': failure_CDF,
+            'survivor': survivor,
+            'hazard': hazard
+        })
+        
+        self.baseline = baseline
+        return self.baseline
 
     def penetrance_mainEffect(self,X, P, names, sd = 0.1):
         if (X[names[0]] == 0):
@@ -68,15 +235,12 @@ class genSurvSim:
             p = np.random.normal(P[2],sd)     
         else:
             p = 0
-        
-         
         if 0 < 0: 
             p = min(P)
         elif p > 1:
             p = max(P)
                 
         return p
-
 
     def penetrance_2way(self, X, P, names, sd = 0.05):
         if ((X[names[0]] == 0) & (X[names[1]] == 0)):
@@ -107,7 +271,6 @@ class genSurvSim:
             
         return p
 
-
     def penetrance_add(self,X, P0, P1, names, sd = 0.05):
         P01 = []
         for i in P0:
@@ -117,7 +280,6 @@ class genSurvSim:
         P = []
         for i in P01: 
             P.append(i)
-
         
         if ((X[names[0]] == 0) & (X[names[1]] == 0) & (X[names[2]] == 0)):
                 p = np.random.normal(P[0],sd)
@@ -175,8 +337,6 @@ class genSurvSim:
             p = np.random.normal(P[26],sd)       
         else:
             p = 0
-            
-            
         return p
 
     def penetrance_het(self, X, P0, P1, names, sd = 0.05):
@@ -210,13 +370,11 @@ class genSurvSim:
                 p = np.random.normal(P1[8],sd)        
             else:
                 p = 0 
-            
         return p
-
 
     def generate_time(self, X, names, P,P0,P1, model,censor = 0.1): #adding "model" to specify which penetrance function to use
 
-        baseline = self.baseline_build(self.T, self.knots)
+        baseline = self.baseline_build(self.T, self.d_type)
         
         T = max(baseline['time'])
         X = pd.DataFrame(X)

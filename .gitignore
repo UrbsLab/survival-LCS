@@ -1,5 +1,6 @@
 __pycache__
 .ipynb_checkpoints/
+pipeline*/
 pipeline/
 pipeline1/
 output/*.zip
