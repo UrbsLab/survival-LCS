@@ -1,3 +1,4 @@
 sbatch run_sim_cv_dataset_creation.sh
-sbatch run_sim_run_survivalLCS.sh
-sbatch run_sim_run_coxModel.sh
+python sim_run_survivalLCS.py
+python sim_run_coxModelRun.py
+python sim_run_survivalLCS_perm.py

@@ -3,7 +3,8 @@ __pycache__
 pipeline*/
 pipeline/
 pipeline1/
-output/*.zip
+per_run_notebooks/
+output/*
 logs/
 dask_logs/
 simulated_datasets/

@@ -34,7 +34,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=16):
                                    memory=str(memory) + "G",
                                    walltime="24:00:00",
                                    log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == "LSF":
             cluster = LSFCluster(queue=queue,
                                  cores=1,
@@ -42,7 +42,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=16):
                                  memory=str(memory) + "G",
                                  walltime="24:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == 'UGE':
             cluster = SGECluster(queue=queue,
                                  cores=1,
@@ -50,7 +50,7 @@ def get_cluster(cluster_type='SLURM', output_path=".", queue='defq', memory=16):
                                  resource_spec="mem_free=" + str(memory) + "G",
                                  walltime="24:00:00",
                                  log_directory=output_path + "/dask_logs/")
-            cluster.adapt(maximum_jobs=200)
+            cluster.adapt(maximum_jobs=100)
         elif cluster_type == 'Local':
             c = Client()
             cluster = c.cluster
