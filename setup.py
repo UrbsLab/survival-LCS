@@ -27,7 +27,7 @@ setup(
     'pytest-shutil',
     'eli5',
     'scikit-survival==0.21.0',
-  ]',
+  ],
   classifiers=[
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
