@@ -5,14 +5,13 @@ import pickle
 import shutil
 import pandas as pd
 from time import sleep
-from dask.distributed import progress
-from survivalLCSRun import ExperimentRun
+from survivalLCSOtherOutputRun import ExperimentRun
 from sim_utils import get_parameters, get_cluster, run_parellel
 
 homedir = "/home/bandheyh/common/survival-LCS-telo"
 sys.path.append(homedir)
 
-HPC = True
+HPC = False
 DEBUG = False
 
 if os.path.exists(homedir + '/dask_logs/'):
@@ -28,19 +27,11 @@ censor_list = [0.1, 0.4, 0.8]
 
 time_label = "eventTime"
 status_label = "eventStatus"
-instance_label="inst"
-T = 100
-knots = 8
-
-iterations = 200000
+instance_label = "inst"
 random_state = 42
 
 print("Random Seed:", random_state)
 cv_count = 5
-pmethod = "random"
-isContinuous = True
-nu = 1
-rulepop = 2000
 
 if DEBUG:
     outputdir = homedir + "/test"
@@ -48,16 +39,12 @@ if DEBUG:
     censor_list = [ 0.1 ]
     nfeat_list = ['f100']
     maf_list = ['maf0.2']
-    iterations = 1000
     cv_count = 3
-
-### Create empty brier score DataFrame
-brier_df = pd.DataFrame()
 
 # make_folder_structure(outputdir, model_list)
 
 job_obj_list = list()
-brier_df_list = list()
+num = 0
 
 for i in range(0,len(model_list)):
     for j in range(0,len(nfeat_list)):
@@ -77,18 +64,16 @@ for i in range(0,len(model_list)):
             model_type = mtype
 
             for l in range(0, len(censor_list)):
-                for m in range(0, cv_count):
-                    slcs = ExperimentRun(data_path, model_path, output_path, model_type, m, censor_list[l], 
-                                        iterations, nu, rulepop)
-                    if HPC == False:
-                        ibs = slcs.run()
-                        brier_df_list.append(ibs)
-                    else:
-                        job_obj_list.append(slcs)
-
-print("No of jobs:", len(job_obj_list))
+                slcs = ExperimentRun(data_path, model_path, output_path, model_type, cv_count, censor_list[l])
+                if HPC == False:
+                    slcs.run()
+                    num+=1
+                    print(num, "Items Run")
+                else:
+                    job_obj_list.append(slcs)
 
 if HPC == True:
+    print("No of jobs:", len(job_obj_list))
     cluster = get_cluster(output_path=homedir)
     delayed_results = []
     for model in job_obj_list:
@@ -104,14 +89,3 @@ if HPC == True:
         sleep(60)
 
     print("Finished")
-
-    print("Errors:", sum(type(x) != pd.DataFrame for x in results))
-
-    with open(outputdir + '/results_survivalLCS_parallel.pkl', 'wb') as file:
-        pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
-    
-    error_list = [type(x) != pd.DataFrame for x in results]
-
-    with open(outputdir + '/errors_survivalLCS_parallel.pkl', 'wb') as file:
-        pickle.dump(results, file, pickle.HIGHEST_PROTOCOL)
-
