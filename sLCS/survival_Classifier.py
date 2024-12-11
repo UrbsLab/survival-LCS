@@ -1,7 +1,7 @@
 import random
 import copy
 import numpy as np
-from survival_DataManagement import *
+from .survival_DataManagement import *
 
 class Classifier: #this script is for an INDIVIDUAL CLASSIFIER
     def __init__(self,model):

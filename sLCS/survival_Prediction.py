@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #Import Required Modules-------------------------------
 #from exstracs_constants import *
-from survival_DataManagement import *
+from .survival_DataManagement import *
 import random
 import numpy as np
 from numpy import exp
@@ -117,7 +117,7 @@ class Prediction:
             empDist = np.asarray(sorted(self.matchCoverTimes), dtype=object).reshape((len(self.matchCoverTimes), 1)) #sort the correct times, set as the empricial distribution
             if len(empDist) == 0:
                 print("No matching cover times available, no empirical distribution, cannot predict survival distribution")
-                return
+                return None
             
             KDEmodel = KernelDensity(bandwidth=4, kernel='epanechnikov')
             KDEmodel.fit(empDist) #fit the KDE to the empirical distribution
@@ -195,7 +195,7 @@ class Prediction:
 #-----------------------------------------------------------------------------------------------------------------
 # plotSurvDist: NOT CALLED ANYWHERE YET
 #-----------------------------------------------------------------------------------------------------------------    
-    def plotSurvDist(self, survProb):
+    def plotSurvDist(self, survProb, empDist=None):
         plt.figure(figsize=(10, 10))
         plt.vlines(empDist, 0, 0.05, linestyles ="solid", colors ="k")
         plt.xlabel('Time')

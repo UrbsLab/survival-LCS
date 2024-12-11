@@ -3,16 +3,16 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import recall_score
 import numpy as np
-from survival_Timer import Timer
-from survival_OfflineEnvironment import OfflineEnvironment
-from survival_ExpertKnowledge import ExpertKnowledge
-from survival_AttributeTracking import AttributeTracking
-from survival_ClassifierSet import ClassifierSet
-from survival_Prediction import Prediction
-from survival_RuleCompaction import RuleCompaction
-from survival_IterationRecord import IterationRecord
-from survival_Pareto import Pareto
-from survival_Metrics import Metrics
+from .survival_Timer import Timer
+from .survival_OfflineEnvironment import OfflineEnvironment
+from .survival_ExpertKnowledge import ExpertKnowledge
+from .survival_AttributeTracking import AttributeTracking
+from .survival_ClassifierSet import ClassifierSet
+from .survival_Prediction import Prediction
+from .survival_RuleCompaction import RuleCompaction
+from .survival_IterationRecord import IterationRecord
+from .survival_Pareto import Pareto
+from .survival_Metrics import Metrics
 import matplotlib.pyplot as plt
 from sksurv.nonparametric import kaplan_meier_estimator
 from sklearn.impute import KNNImputer
@@ -26,7 +26,7 @@ import pandas as pd
 import math
 import sys 
 
-class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
+class survivalLCS(BaseEstimator,ClassifierMixin):
     def __init__(self,learning_iterations=100000,N=1000,nu=1,chi=0.8,mu=0.04,upsilon=0.04,theta_GA=25,theta_del=20,theta_sub=20,
                  acc_sub=0.99,beta=0.2,delta=0.1,init_fitness=0.01,fitness_reduction=0.1,theta_sel=0.5,rule_specificity_limit=None,
                  do_correct_set_subsumption=False,do_GA_subsumption=True,selection_method='tournament',do_attribute_tracking=True,
@@ -101,14 +101,14 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
 
         if mu < 0 or mu > 1:
             raise Exception("mu param must be float from 0 - 1")
-            
+
         #upsilon
         if not self.checkIsFloat(upsilon):
             raise Exception("mu param must be float from 0 - 1")
 
         if upsilon < 0 or upsilon > 1:
             raise Exception("upsilon param must be float from 0 - 1")
-            
+
         #theta_GA
         if not self.checkIsFloat(theta_GA):
             raise Exception("theta_GA param must be nonnegative float")
@@ -294,7 +294,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             self.population = ClassifierSet()
 #-----------------------------------------------------------------------------------------------------------------
 # checkIsInt:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def checkIsInt(self, num):
         try:
             n = float(num)
@@ -306,7 +306,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             return False
 #-----------------------------------------------------------------------------------------------------------------
 # checkIsFloat:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def checkIsFloat(self, num):
         try:
             n = float(num)
@@ -317,9 +317,9 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
     ##*************** Fit ****************
 #-----------------------------------------------------------------------------------------------------------------
 # fit:
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def fit(self, X, y, z):
-        """Scikit-learn required: Supervised training of survival_ExSTraCS
+        """Scikit-learn required: Supervised training of survivalLCS
              Parameters
             X: array-like {n_samples, n_features} Training instances. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC or NAN
             y: array-like {n_samples} Training labels. ALL INSTANCE PHENOTYPES MUST BE NUMERIC NOT NAN OR OTHER TYPE
@@ -435,7 +435,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         return self
 #-----------------------------------------------------------------------------------------------------------------
 # addToTracking:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def addToTracking(self,accuracy,aveGenerality):
         self.record.addToTracking(self.iterationCount, accuracy, aveGenerality, self.trackingObj.macroPopSize,
                                   self.trackingObj.microPopSize, self.trackingObj.matchSetSize,self.trackingObj.correctSetSize,
@@ -446,8 +446,8 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
                                   self.timer.globalInit, self.timer.globalAdd, self.timer.globalRuleCmp,self.timer.globalDeletion,
                                   self.timer.globalSubsumption, self.timer.globalSelection, self.timer.globalEvaluation)
 #-----------------------------------------------------------------------------------------------------------------
-# runIteration: 
-#-----------------------------------------------------------------------------------------------------------------  
+# runIteration:
+#-----------------------------------------------------------------------------------------------------------------
     def runIteration(self,state_event):
         # Reset tracking object counters
         self.trackingObj.resetAll()
@@ -461,19 +461,19 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
                 self.timer.startTimeEvaluation()
                 prediction = Prediction(self,self.population)
                 eventPrediction = prediction.getDecision()
-                #survivalPrediction = prediction.getSurvProb() #unsure if this is needed here 
-            
+                #survivalPrediction = prediction.getSurvProb() #unsure if this is needed here
+
                 predictionError = math.fabs(eventPrediction - float(state_event[1]))
                 eventRange = self.env.formatData.eventList[1] - self.env.formatData.eventList[0]
 
                 accuracyEstimate = 1.0 - (predictionError / float(eventRange))
-            
+
                 if len(self.trackingAccuracy) == self.movingAvgCount:
                     del self.trackingAccuracy[0]
                 self.trackingAccuracy.append(accuracyEstimate)
             except Exception as e:
                 print("Tracking acc failed this iteration because: ",e)
-               
+
             #print("Accuracy estimate: ", accuracyEstimate)
             #print("self.trackingAcc: ", self.trackingAccuracy)
             #if eventPrediction == state_event[1]: #this might need to change? if the eventPrediction = the time of event (for this instance)
@@ -515,7 +515,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         self.population.deletion(self)
 
         self.trackingObj.macroPopSize = len(self.population.popSet)
-        self.trackingObj.microPopSize = self.population.microPopSize    
+        self.trackingObj.microPopSize = self.population.microPopSize
         self.trackingObj.matchSetSize = len(self.population.matchSet)
         self.trackingObj.correctSetSize = len(self.population.correctSet)
         self.trackingObj.avgIterAge = self.population.getInitStampAverage()
@@ -526,7 +526,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
     ##*************** Population Reboot ****************
 #-----------------------------------------------------------------------------------------------------------------
 # saveFinalMetrics:
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def saveFinalMetrics(self):
         self.finalMetrics = [self.learning_iterations,self.timer.globalTime, self.timer.globalMatching,self.timer.globalCovering,
                              self.timer.globalCrossover, self.timer.globalMutation, self.timer.globalAT,self.timer.globalEK,
@@ -538,14 +538,14 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         #print("size of global matching: ",sys.getsizeof(self.timer.globalMatching))
         #print("size of global covering: ",sys.getsizeof(self.timer.globalCovering))
         #print("size of global crossover: ",sys.getsizeof(self.timer.globalCrossover))
-        #print("size of global init: ",sys.getsizeof(self.timer.globalInit)) 
+        #print("size of global init: ",sys.getsizeof(self.timer.globalInit))
        	#print("size of AT: ",sys.getsizeof(self.AT))
-       	#print("size of env: ",sys.getsizeof(self.env)) 
+       	#print("size of env: ",sys.getsizeof(self.env))
        	#print("size of population.popset: ",sys.getsizeof(self.population.popSet))
 
 #-----------------------------------------------------------------------------------------------------------------
 # pickle_model:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def pickle_model(self,filename=None,saveRCPop=False):
         if self.hasTrained and self.learning_iterations == self.iterationCount: # Check hasFit, and there is new stuff to pickle
             if filename == None:
@@ -561,10 +561,10 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         elif self.hasTrained and self.learning_iterations != self.iterationCount:
             raise Exception("Pickle not allowed, as there is nothing new to pickle.")
         else:
-            raise Exception("There is no final model to pickle, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no final model to pickle, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 # rebootPopulation:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def rebootPopulation(self):
         file = open(self.reboot_filename,'rb')
         rawData = pickle.load(file)
@@ -584,7 +584,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         self.env = rawData[16]
 #-----------------------------------------------------------------------------------------------------------------
 # rebootTimer:
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def rebootTimer(self):
         file = open(self.reboot_filename, 'rb')
         rawData = pickle.load(file)
@@ -609,9 +609,9 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
     ##*************** Predict and Score ****************
 #-----------------------------------------------------------------------------------------------------------------
 # predict: predicts the time of event (centroid of the maximal overlapping intervals)
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def predict(self, X):
-        """Scikit-learn required: Test Accuracy of survival_ExSTraCS
+        """Scikit-learn required: Test Accuracy of survivalLCS
             Parameters
             X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
             Returns
@@ -636,15 +636,15 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             #eventPrediction = prediction.getSlopeDecision()
             predList.append(eventPrediction)
             self.population.clearSets()
-        #see if we can return both array and plot    
+        #see if we can return both array and plot
         return np.array(predList)#, prediction.plotPredResults(predList) #prediction.plotPredResults(predList), to plot, np.array(predList), to array
 
 #-----------------------------------------------------------------------------------------------------------------
 # predict_proba:
-#-----------------------------------------------------------------------------------------------------------------      
-            
-    def predict_proba(self, X,q): # change this to call getSurvProb survivalPrediction = prediction.getSurvProb() 
-        """Scikit-learn required: Test Accuracy of survival_ExSTraCS
+#-----------------------------------------------------------------------------------------------------------------
+
+    def predict_proba(self, X,q): # change this to call getSurvProb survivalPrediction = prediction.getSurvProb()
+        """Scikit-learn required: Test Accuracy of survivalLCS
             Parameters
             X: array-like {n_samples, n_features} Test instances to classify. ALL INSTANCE ATTRIBUTES MUST BE NUMERIC
             Returns
@@ -666,78 +666,79 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             state = X[inst]
             self.population.makeEvalMatchSet(self,state)
             prediction = Prediction(self, self.population)
-            indSurvivalDist = prediction.individualSurvivalProbDist(self.population,testTimes) 
+            indSurvivalDist = prediction.individualSurvivalProbDist(self.population,testTimes)
             predList.append(indSurvivalDist) #returns survival probability distribution
             self.population.clearSets()
         return np.array(predList)
 
 #-----------------------------------------------------------------------------------------------------------------
 # plotPreds
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def plotPreds(self,predList):
         prediction = Prediction(self, self.population)
         return prediction.plotPredResults(predList)
 
 #-----------------------------------------------------------------------------------------------------------------
 # score: returns c_index
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def score(self,X,y,z): #change this to C-index code
         predList = self.predict(X)
-        getCIndex = Metrics(X,y,z,predList)
+        p, q, predProbs = None, None, None
+        getCIndex = Metrics(X,p,q,y,z,predList,predProbs)
         c_index = getCIndex._estimate_concordance_index(y,z,predList,tied_tol=1e-8)
         return c_index
 
 
 #-----------------------------------------------------------------------------------------------------------------
 # brier_score: returns integrated brier scores across all time points, accounting for censoring
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def brier_score(self,X,p,q,m,y,z): #X is dataFeatures_test,  p = dataEventStatus_test, q = dataEventTimes_test,m = dataEventTimes_train, y = dataEvents_train, z = dataEvents_test
         predList = self.predict(X)
         predProbs = self.predict_proba(X,q)
 #need to make "times" above using q think. That way predProbs uses the right ranges? Then move the line above to below times below.
-        
+
         ranges = [min(q), max(q),min(m), max(m)]
 #        print('ranges: ', ranges)
         #predProbs = predProbs[:,min(ranges):max(ranges)] #keeps only the columns for times present in dataEventTimes_test
         times = np.arange(min(q),max(q))
         getBrierScore = Metrics(X,p,q,y,z,predList,predProbs)
         times, b_scores = getBrierScore._brier_score(y,z,predProbs,times)
-        
+
         return times, b_scores
 
 #-----------------------------------------------------------------------------------------------------------------
 # brier_score: returns integrated brier scores across all time points, accounting for censoring
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def integrated_b_score(self,X,p,q,m,y,z): #X is dataFeatures_test,  p = dataEventStatus_test, q = dataEventTimes_test,m = dataEventTimes_train, y = dataEvents_train, z = dataEvents_test
         predList = self.predict(X)
         predProbs = self.predict_proba(X,q)
 #need to make "times" above using q think. That way predProbs uses the right ranges? Then move the line above to below times below.
-        
+
         ranges = [min(q), max(q),min(m), max(m)]
  #       print('ranges: ', ranges)
         #predProbs = predProbs[:,min(ranges):max(ranges)] #keeps only the columns for times present in dataEventTimes_test
         times = np.arange(min(q),max(q))
         getBrierScore = Metrics(X,p,q,y,z,predList,predProbs)
         ibs_value = getBrierScore.integrated_brier_score(y,z,predProbs,times)
-        
+
         return ibs_value
-    
+
 
 #-----------------------------------------------------------------------------------------------------------------
 # plot_ibs: Plots the average brier scores over each time point. - duplicating this elsewhere to plot over groups of simulated datasets
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def plot_ibs(self, times, b_scores):
         plt.figure(figsize=(10, 10))
         #pyplot.vlines(empDist, 0, 0.05, linestyles ="solid", colors ="k")
         plt.xlabel('Time')
         plt.ylabel('Brier score')
-        
+
         plt.plot(times, b_scores)
 
 
 #-----------------------------------------------------------------------------------------------------------------
-# plotfeatImp: Plots the attribute tracking scores from each CV as a box plot, created to coincide with the Cox and RSF permutation plots. Eventuallly need to create just ONE plot from these 
-#-----------------------------------------------------------------------------------------------------------------          
+# plotfeatImp: Plots the attribute tracking scores from each CV as a box plot, created to coincide with the Cox and RSF permutation plots. Eventuallly need to create just ONE plot from these
+#-----------------------------------------------------------------------------------------------------------------
     def plotfeatImp(self, outputPath, model_type, dataFeatures, dataHeaders, featImp, cens_prop=None):
 
         featImp_data = pd.DataFrame(featImp, columns=dataHeaders) #[:-1]?
@@ -745,7 +746,7 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
         featImp_meds = featImp_meds.sort_values(ascending=False)
         featImp_data = featImp_data[featImp_meds.index]
         featImp_data = featImp_data.iloc[:,:11] #top 10 features
-       
+
         if cens_prop != None:
             fig, ax = plt.subplots(figsize=(10,7))
             featImp_data.boxplot(ax=ax)
@@ -762,22 +763,22 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
 
 #-----------------------------------------------------------------------------------------------------------------
 # plotKM: Plots the kaplan meier survival probabilities for top k features
-#----------------------------------------------------------------------------------------------------------------- 
+#-----------------------------------------------------------------------------------------------------------------
     def plotKM(self, outputPath, dataFeatures, dataEvents, dataHeaders, k, cens_prop = None, attSums = None): #k is how many attributes to plot, dataFeatures could be drawn from elsewhere
 
         #First, format the events df
         timeLabel = 'eventTime'
         censorLabel = 'eventStatus'
-        dataEvents = pd.DataFrame(dataEvents, columns=[timeLabel, censorLabel]) 
+        dataEvents = pd.DataFrame(dataEvents, columns=[timeLabel, censorLabel])
         dataEvents[censorLabel] = dataEvents[censorLabel].astype(bool)
         dataEvents = dataEvents.values
-        
+
         #switch column order
         dataEvents[:, [1, 0]] = dataEvents[:, [0, 1]]
         #format for sksurv
         dataEvents = np.core.records.fromarrays(dataEvents.transpose(),names='cens, time', formats = '?, <f8')
         #print('dataEvents, plotKM: ', dataEvents)
-        
+
         #dataHeaders = dataHeaders[1:] - this is only needed for real data when we have instance labels i think
 
         #-------------------------------
@@ -791,14 +792,14 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             print(imputedFeatures.shape)
             dataFeatures = pd.DataFrame(imputedFeatures, columns = dataHeaders)
         else:
-            dataFeatures = pd.DataFrame(dataFeatures, columns = dataHeaders)	
+            dataFeatures = pd.DataFrame(dataFeatures, columns = dataHeaders)
 
         if attSums is None:
             attSums = self.AT.getSumGlobalAttTrack(self)
 
         #get the index of the top k attribute sums
         topAttIndex = sorted(range(len(attSums)), key=lambda i: attSums[i])[-k:] #this will be a list of indices
-        
+
         #next, need to grab only those features from the dataset
         topFeat = dataFeatures.iloc[:,topAttIndex] #a df with only the selected features
 
@@ -812,13 +813,13 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
                         time_snp, survival_prob_snp = kaplan_meier_estimator(dataEvents['cens'][mask_snp], dataEvents['time'][mask_snp])
 
                         plt.step(time_snp, survival_prob_snp, where="post",label="Genotype = %s" % snp)
-                            
-                    
+
+
                     plt.ylim([0, 1])
                     plt.ylabel("est. probability of survival $\hat{S}(t)$")
                     plt.xlabel("time $t$")
                     plt.legend(loc="best")
-                    plt.title("Survival stratified by %s" % col)                
+                    plt.title("Survival stratified by %s" % col)
                     plt.savefig(outputPath+'/cens_'+str(cens_prop)+'/top_feat_KM_'+str(col)+'.png')
                     plt.show()
                     plt.close()
@@ -838,25 +839,27 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
                     plt.ylabel("est. probability of survival $\hat{S}(t)$")
                     plt.xlabel("time $t$")
                     plt.legend(loc="best")
-                    plt.title("Survival stratified by %s" % col)                               
+                    plt.title("Survival stratified by %s" % col)
                     plt.savefig(outputPath+'/top_feat_KM_'+str(col)+'.png')
                     plt.show()
                     plt.close()
 
-   
+
 
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_training_accuracy(self,RC=False):
         if self.hasTrained or RC:
             originalTrainingData = self.env.formatData.savedRawTrainingData
-            return self.score(originalTrainingData[0], originalTrainingData[1])
+            # Doesn't Work
+            # return self.brier_score(dataFeatures_test,dataEventStatus_test,dataEventTimes_test,dataEventTimes_train, dataEvents_train, dataEvents_test)
+
         else:
-            raise Exception("There is no final training accuracy to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no final training accuracy to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_instance_coverage(self):
         if self.hasTrained:
             numCovered = 0
@@ -864,41 +867,42 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             for state in originalTrainingData[0]:
                 self.population.makeEvalMatchSet(self,state)
                 predictionArray = Prediction(self, self.population)
-                if predictionArray.hasMatch:
-                    numCovered += 1
+                # There is no hasMatch Variable
+                # if predictionArray.hasMatch:
+                #     numCovered += 1
                 self.population.clearSets()
             return numCovered/len(originalTrainingData[0])
         else:
-            raise Exception("There is no final instance coverage to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no final instance coverage to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_attribute_specificity_list(self):
         if self.hasTrained:
             return self.population.getAttributeSpecificityList(self)
         else:
-            raise Exception("There is no final attribute specificity list to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no final attribute specificity list to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_attribute_accuracy_list(self):
         if self.hasTrained:
             return self.population.getAttributeAccuracyList(self)
         else:
-            raise Exception("There is no final attribute accuracy list to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no final attribute accuracy list to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_attribute_tracking_sums(self):
         if self.hasTrained and self.AT != None:
             return self.AT.getSumGlobalAttTrack(self)
         elif not self.do_attribute_tracking:
             raise Exception("There are no final attribute tracking sums to return, as AT was False")
         else:
-            raise Exception("There are no final attribute tracking sums to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There are no final attribute tracking sums to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_final_attribute_coocurrences(self,headers,maxNumAttributesToTrack=50):
         #Return a 2D list of [[attr1Name, attr2Name, specificity, accuracy weighted specificity]...]
         if self.hasTrained:
@@ -932,10 +936,10 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
 
         else:
             raise Exception(
-                "There are no final attribute cooccurences to return, as the survival_ExSTraCS model has not been trained")
+                "There are no final attribute cooccurences to return, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def get_attribute_tracking_scores(self,instance_labels=np.array([])):
         if self.hasTrained:
             retList = []
@@ -946,20 +950,20 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
                 retList.append([instance_labels[i], self.AT.attAccuracySums[self.env.formatData.shuffleOrder[i]]])
             return retList
         else:
-            raise Exception("There is no AT scores to return, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no AT scores to return, as the survivalLCS model has not been trained")
 
     ##Export Methods##
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def export_iteration_tracking_data(self,filename='iterationData.csv'):
         if self.hasTrained:
             self.record.exportTrackingToCSV(filename)
         else:
-            raise Exception("There is no tracking data to export, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no tracking data to export, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def export_final_rule_population(self,headerNames=np.array([]),className="phenotype",filename='populationData.csv',DCAL=True,RCPopulation=False):
         if self.hasTrained:
             if RCPopulation:
@@ -972,12 +976,12 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             else:
                 self.record.exportPop(self,popSet,headerNames, className, filename)
         else:
-            raise Exception("There is no rule population to export, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no rule population to export, as the survivalLCS model has not been trained")
 
     ##Rule Compaction Method ##
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def post_training_rule_compaction(self,method='QRF'):
         if self.hasTrained:
             oldRC = copy.deepcopy(self.rule_compaction)
@@ -986,15 +990,15 @@ class survival_ExSTraCS(BaseEstimator,ClassifierMixin):
             self.rule_compaction = oldRC
             self.saveFinalMetrics()
         else:
-            raise Exception("There is no rule population to compact, as the survival_ExSTraCS model has not been trained")
+            raise Exception("There is no rule population to compact, as the survivalLCS model has not been trained")
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
 class TempTrackingObj():
     #Tracks stats of every iteration (except accuracy, avg generality, and times)
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------      
+#-----------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self.macroPopSize = 0
         self.microPopSize = 0
@@ -1009,7 +1013,7 @@ class TempTrackingObj():
         self.RCCount = 0
 #-----------------------------------------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------------------------------------  
+#-----------------------------------------------------------------------------------------------------------------
     def resetAll(self):
         self.macroPopSize = 0
         self.microPopSize = 0

@@ -1,11 +1,12 @@
-numpy==1.16.2
-pandas==0.24.2
-scikit-learn==0.22.2
-seaborn==0.10.1
-skrebate==0.62
-scikit-ExSTraCS==1.0.5
-networkx==2.4
-matplotlib==3.1.1
-scipy==1.2.1
-pygame==1.9.6
-fastcluster==1.1.26
+numpy==1.21.2 # older used 1.16.2
+pandas # older used 0.24.2
+matplotlib # older used 3.1.1
+scikit-learn==1.22.2 #older used 0.22.2
+skrebate # older used 0.62
+fastcluster # older used 1.1.26
+seaborn # older used 0.10.1
+networkx # older used 2.4
+pygame # older used 1.9.6
+pytest-shutil # new
+eli5 # new
+scikit-survival==0.21.0 # new

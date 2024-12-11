@@ -1,4 +1,4 @@
-from survival_DataManagement import DataManagement
+from .survival_DataManagement import DataManagement
 
 class OfflineEnvironment:
     def __init__(self,dataFeatures,dataEventTimes,dataEventStatus,model):
