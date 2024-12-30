@@ -19,7 +19,7 @@ if os.path.exists(homedir + '/dask_logs/'):
 if not os.path.exists(homedir + '/dask_logs/'):
     os.mkdir(homedir + '/dask_logs/')
 
-outputdir = homedir + "/pipeline"
+outputdir = homedir + "/pipeline_randomspline"
 model_list = ['me', 'epi', 'het', 'add']
 nfeat_list = ['f100', 'f1000', 'f10000']
 maf_list = ['maf0.2', 'maf0.4']
@@ -66,9 +66,13 @@ for i in range(0,len(model_list)):
             for l in range(0, len(censor_list)):
                 slcs = ExperimentRun(data_path, model_path, output_path, model_type, cv_count, censor_list[l])
                 if HPC == False:
-                    slcs.run()
-                    num+=1
-                    print(num, "Items Run")
+                    try:
+                        slcs.run()
+                        num+=1
+                        print(num, "Items Run")
+                    except:
+                        num+=1
+                        print("Items", num, "Failed")
                 else:
                     job_obj_list.append(slcs)
 
