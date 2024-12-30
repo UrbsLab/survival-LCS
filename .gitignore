@@ -9,8 +9,9 @@ pipeline/dask_logs/
 pipeline/lcsdive/
 pipeline/*.csv
 pipeline/*.pkl
-# pipeline/
+pipeline/
 pipeline_copy/
+pipeline_copy_final/
 pipeline_copy_old/
 pipeline_2/
 pipeline_3/
