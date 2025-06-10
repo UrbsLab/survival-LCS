@@ -51,22 +51,28 @@ subTime = dataTracking["Total Subsumption Time"].values
 selTime = dataTracking["Total Selection Time"].values
 evalTime = dataTracking["Total Evaluation Time"].values
 
-plt.plot(iterations,initTime,label="Init Time")
-plt.plot(iterations,mTime+initTime,label="Matching Time")
-plt.plot(iterations,covTime+mTime+initTime,label="Covering Time")
-plt.plot(iterations,selTime+covTime+mTime+initTime,label="Selection Time")
-plt.plot(iterations,crossTime+selTime+covTime+mTime+initTime,label="Crossover Time")
-plt.plot(iterations,mutTime+crossTime+selTime+covTime+mTime+initTime,label="Mutation Time")
-plt.plot(iterations,subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Subsumption Time")
-plt.plot(iterations,atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="AT Time")
-plt.plot(iterations,delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Deletion Time")
-plt.plot(iterations,rcTime+delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="RC Time")
-plt.plot(iterations,evalTime+rcTime+delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Evaluation Time")
-plt.plot(iterations,gTime,label="Total Time")
+color_list = [None,'tab:blue','tab:orange','tab:green','tab:red','tab:purple','tab:brown','tab:pink','tab:gray','tab:olive','tab:cyan','m','k']
+plt.plot(iterations,initTime,label="Init Time", color=color_list[1])
+plt.plot(iterations,mTime+initTime,label="Matching Time",color=color_list[2])
+plt.plot(iterations,covTime+mTime+initTime,label="Covering Time",color=color_list[3])
+plt.plot(iterations,selTime+covTime+mTime+initTime,label="Selection Time",color=color_list[4])
+plt.plot(iterations,crossTime+selTime+covTime+mTime+initTime,label="Crossover Time",color=color_list[5])
+plt.plot(iterations,mutTime+crossTime+selTime+covTime+mTime+initTime,label="Mutation Time",color=color_list[6])
+plt.plot(iterations,subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Subsumption Time",color=color_list[7])
+plt.plot(iterations,atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="AT Time",color=color_list[8])
+plt.plot(iterations,delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Deletion Time",color=color_list[9])
+plt.plot(iterations,rcTime+delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="RC Time",color=color_list[10])
+plt.plot(iterations,evalTime+rcTime+delTime+atTime+subTime+mutTime+crossTime+selTime+covTime+mTime+initTime,label="Evaluation Time",linestyle='--',color=color_list[11])
+plt.plot(iterations,gTime,label="Total Time",linestyle='--',color=color_list[12])
 plt.xlabel('Iteration')
 plt.ylabel('Cumulative Time (Seconds)')
-plt.legend()
-plt.savefig('output/Figure4.png')
+handles, labels = plt.gca().get_legend_handles_labels()
+max_values = [np.max(line.get_ydata()) for line in handles]
+sorted_indices = np.argsort(max_values)[::-1]
+sorted_handles = [handles[i] for i in sorted_indices]
+sorted_labels = [labels[i] for i in sorted_indices]
+plt.legend(sorted_handles, sorted_labels)
+plt.savefig('../output/Figure4.png', dpi=600)
 plt.show()
 
 # %%
