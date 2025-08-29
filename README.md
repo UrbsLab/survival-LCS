@@ -11,7 +11,7 @@ Survival analysis is a critical aspect of modeling time-to-event data in fields 
 This main branch includes the scikit-learn compatable implementation of Survival-LCS, however the algorithm and analysis code that pairs with the 2024 GECCO paper cited below is found at: 
 [Survival-LCS/tree/gecco](https://github.com/UrbsLab/survival-LCS/tree/gecco).
 
-Further the algorithm and analysis code tha pairs with the 2025 expanded TELO paper is found at: 
+Further the algorithm and analysis code that pairs with the 2025 expanded TELO paper is found at: 
 [Survival-LCS/tree/telo](https://github.com/UrbsLab/survival-LCS/tree/telo).
 
 Please note that we do not plan to continue development of this repository further.  Rather we plan to take some of the algorithmic concepts introduced in Survival-LCS to expand our new [HEROS](https://github.com/UrbsLab/heros) to survival analysis tasks. 
