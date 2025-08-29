@@ -14,7 +14,7 @@ This main branch includes the scikit-learn compatable implementation of Survival
 Further the algorithm and analysis code that pairs with the 2025 expanded TELO paper is found at: 
 [Survival-LCS/tree/telo](https://github.com/UrbsLab/survival-LCS/tree/telo).
 
-Please note that we do not plan to continue development of this repository further.  Rather we plan to take some of the algorithmic concepts introduced in Survival-LCS to expand our new [HEROS](https://github.com/UrbsLab/heros) to survival analysis tasks. 
+Please note that we do not plan to continue development of this repository further.  Rather we plan to take some of the algorithmic concepts introduced in Survival-LCS to expand our new [HEROS](https://github.com/UrbsLab/heros) rule-based machine learning algorithm to survival analysis tasks. 
 
 ## Installation
 
