@@ -74,16 +74,7 @@ If you do not already have access to the dataset archive, please request it from
 
 ## Folder Setup
 
-Before running experiments, create the following folders **inside the designated home directory for outputs**:
-
-- `cv_sim_data/`  
-  - subfolders: `cv_me`, `cv_epi`, `cv_het`, `cv_add`  
-- `pickled_cv_models/`  
-  - subfolders: `me`, `epi`, `het`, `add`  
-- `sim_lcs_output/`  
-  - subfolders: `me`, `epi`, `het`, `add`  
-
-Additionally, create a **separate pipeline folder for each survival distribution**:  
+Before running experiments, create a **separate pipeline folders for each survival distribution**:  
 
 ```
 randomspline_pipeline/
@@ -92,8 +83,17 @@ gaussian_pipeline/
 weibull_pipeline/
 ```
 
-All runs and outputs for that distribution should be contained in its respective folder.  
- **Note:** The correct format is `<distribution>_pipeline/` (e.g., `gamma_pipeline/`), **not** `pipeline/<distribution>`.
+Additionally, create the following folders **inside the designated pipeline directories for outputs**:
+
+- `cv_sim_data/`  
+  - subfolders: `cv_me`, `cv_epi`, `cv_het`, `cv_add`  
+- `pickled_cv_models/`  
+  - subfolders: `me`, `epi`, `het`, `add`  
+- `sim_lcs_output/`  
+  - subfolders: `me`, `epi`, `het`, `add`  
+
+All runs and outputs for each distribution should be contained in its respective folder.  
+ **Note:** The correct format is `<distribution>_pipeline/` (e.g., `random_pipeline/`), **not** `pipeline/<distribution>`.
 
 ---
 
@@ -205,10 +205,10 @@ After completion, all results for the Randomspline distribution will be stored i
 
 Repeat the same process for `gamma_pipeline/`, `gaussian_pipeline/`, and `weibull_pipeline/` by updating distribution_type and outputdir.
 
-## Citation
+<!-- ## Citation
 
 If you use this code, please cite:
 
 **Alexa Woodward, Harsh Bandhey, Jason H. Moore, and Ryan J. Urbanowicz.  
 2025. Survival-LCS: Rule-Based Survival Analysis Without Proportional Hazard Assumptions.  
-ACM Transactions on Evolutionary Learning and Optimization.**
+ACM Transactions on Evolutionary Learning and Optimization.** -->
