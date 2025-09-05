@@ -1,18 +1,12 @@
-# Survival-LCS: Rule-Based Survival Analysis Without Proportional Hazard Assumptions
+# Survival-LCS: Rule-Based Survival Analysis Without Proportional Hazard Assumptions.
 
 This repository contains the code, scripts, and analysis files supporting the publication:
 
-**Alexa Woodward, Harsh Bandhey, Jason H. Moore, and Ryan J. Urbanowicz.  
-1.    Survival-LCS: Rule-Based Survival Analysis Without Proportional Hazard Assumptions.  
-ACM Transactions on Evolutionary Learning and Optimization, August 2025.**
+Alexa Woodward, Harsh Bandhey, Jason H. Moore, and Ryan J. Urbanowicz.  
+2025. Survival-LCS: Rule-Based Survival Analysis Without Proportional Hazard Assumptions.  
+ACM Transactions on Evolutionary Learning and Optimization, August 2025.
 
 Survival-LCS extends ExSTraCS to model survival (time-to-event) data without relying on proportional hazard assumptions. This work builds on earlier evaluations and introduces broader hyperparameter resources, additional survival distributions (Random, Gamma, Gaussian, Weibull), and comprehensive benchmarking across simulated datasets to assess robustness and interpretability.
-
-## Abstract
-
-Survival analysis is crucial in modeling time-to-event data across biomedical research, epidemiology, and engineering. Traditional methods often rely on restrictive assumptions and face challenges in handling the complexities of real-world datasets. To address these limitations, we introduce the Survival Learning Classifier System (Survival-LCS), an extension of the ExSTraCS algorithm specifically designed for survival analysis. Survival-LCS supports right-censored data, diverse feature types, and missing data while eliminating the need for baseline hazard or survival distribution assumptions, providing a flexible and robust approach to survival modeling.
-
-We extend the evaluation of Survival-LCS by incorporating a wider range of baseline distributions and testing its performance on an expanded set of simulated datasets generated with GAMETES software. These datasets include various genetic architectures, epistatic, additive, heterogeneous, and univariate models, alongside varying censoring proportions, minor allele frequencies, and feature dimensions. This comprehensive sensitivity analysis reveals Survival-LCS’s capability to detect complex, non-linear survival patterns without underlying proportional hazard assumptions. Using Integrated Brier Scores as a key metric, we assess its predictive accuracy for survival times under different distributions. Our findings explore challenges to the algorithm with data distributions, and the potential of Survival-LCS to overcome traditional limitations, offering significant applications in various domains of survival analysis.
 
 ---
 
@@ -134,12 +128,17 @@ The analysis takes extesnive computational requirements and while it can be run 
 2. **Configuring Output Directory**  
    - For **all run scripts** (`sim_run_survivalLCS.py`, `sim_run_survivalLCS_perm.py`, `sim_run_coxModelRun.py`, output-generation scripts), set:  
      ```python
-     outputdir = homedir + "random_pipeline/"     # update for each distribution
+     outputdir = homedir + "gamma_pipeline/"     # update for each distribution
      ```  
    - Ensures outputs are separated by distribution.  
 
 3. **Configuring Run Parameters**  
-   - Edit the top of the `sim_run_*.py` files to adjust parameters if needed.
+   - Edit the top of the `sim_run_*.py` files to adjust parameters if needed:  
+     - Iterations, population size  
+     - Censoring proportions  
+     - Minor allele frequencies  
+     - Number of features  
+     - Genetic model types included  
 
 4. **Running Models**  
    - `sim_run_survivalLCS.py` - Survival-LCS runs.  
@@ -148,15 +147,16 @@ The analysis takes extesnive computational requirements and while it can be run 
    - Repeat for each `<distribution>_pipeline/`.  
 
 5. **Post-Processing and Outputs**  
-   - Run `get_other_results.py` to generate other visualizations such as distribution graphs.
-   - Run `get_runtime_graph.py` to generate collate runtime/performance outputs.  
-   - Other Outputs include:
+   - Run `get_other_results.py` to generate other visualizations such as distribution graphs
+   - Run `get_runtime_graph.py` to generate collate runtime/performance outputs.  .  
+   - Outputs include:
      - **Tables** (via `Tables*.ipynb`)  
      - **Figures** (via `ComprehensiveModelFigure.ipynb`, `SurvivalAnalysisDistributions.ipynb`, etc.)  
      - **Rule Tables & Networks** (via `RuleTables.ipynb`, `NetworkGraph_gefx_generator.ipynb`)  
      - **Runtime Graphs** (via notebooks or scripts)  
    - For each baseline survival distribution (Random, Gamma, Gaussian, Weibull), repeat these runs for each dedicated `<distribution>_pipeline` folder as `outputdir`.  
    - Outputs (CSV/PNG files) are stored in the respective output directories and can be archived with `zip_all_csv_pngs.py`.
+---
 
 ### Worked Example: Randomspline Distribution End-to-End
 
@@ -201,11 +201,9 @@ python zip_all_csv_pngs.py
 
 After completion, all results for the Randomspline distribution will be stored in:
 
-random_pipeline/
+`random_pipeline/`
 
-Repeat the same process for gamma_pipeline/, gaussian_pipeline/, and weibull_pipeline/ by updating distribution_type and outputdir.
-
----
+Repeat the same process for `gamma_pipeline/`, `gaussian_pipeline/`, and `weibull_pipeline/` by updating distribution_type and outputdir.
 
 ## Citation
 
